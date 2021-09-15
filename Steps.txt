@@ -6,3 +6,5 @@ Create Git repository "crypto_marketplace"
 Commit project to Git
 Create market app
 Create favicon using "https://favicon.io/favicon-generator/"
+Create index page
+Create loggo
