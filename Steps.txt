@@ -1,0 +1,8 @@
+Create Database "crypto_marketplace"
+Create Django Project "crypto"
+Link to Database
+Generate requrements.txt using 'pip freeze > requirements.txt'
+Create Git repository "crypto_marketplace"
+Commit project to Git
+Create market app
+Create favicon using "https://favicon.io/favicon-generator/"
