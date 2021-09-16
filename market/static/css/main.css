@@ -11,6 +11,19 @@ code {
   margin: 0 0.3rem;
 }
 
+.default-link{
+  color: #FF8C00;
+}
+
+.default-link:hover{
+  color: #ffa500;
+}
+
+#bootstrap-override button{
+  background-color: #000;
+  border-color: #514B64;
+}
+
 /* canter align navbar Site Name  */
 @media (min-width: 768px) {
   .navbar-brand.abs {
@@ -25,4 +38,9 @@ code {
 
 .navbar{
   font-size: 110%;
+}
+
+#bootstrap-override form{
+  text-align: center;
+  display: inline-block;
 }

@@ -8,3 +8,4 @@ Create market app
 Create favicon using "https://favicon.io/favicon-generator/"
 Create index page
 Create loggo
+Create Registration page (user can see and alter public and private keys in the hidden field using inspect element )
