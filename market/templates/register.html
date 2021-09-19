@@ -25,9 +25,6 @@
       <nav class="navbar navbar navbar-expand-lg navbar-dark bg-dark py-4">
           <div class="container-fluid"> 
             <a class="navbar-brand abs" href="#"><img src="{% static 'img/loggo.png' %}" alt="Crypto Z loggo" style="height: 100px;"> </a>
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNavAltMarkup" aria-controls="navbarNavAltMarkup" aria-expanded="false" aria-label="Toggle navigation">
-              <span class="navbar-toggler-icon"></span>
-            </button>
             <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
               <div class="navbar-nav ms-auto">
                 <a class="nav-link active" aria-current="page" href="{% url 'index' %}">Home</a>
@@ -44,6 +41,10 @@
         <form id="registrationForm" class="default-form align-items-center" action="register" method="POST">
           {% csrf_token %}
           <h1>Sign Up</h1> <br>
+          <!-- Display message when there's an error registering the user -->
+          {% for message in messages %}
+            <h5 style="color: red;">{{ message }}</h5>
+          {% endfor %}
           <div class="mb-3">
             <label for="InputEmail" class="form-label">Email address</label>
             <input type="email" class="form-control" id="InputEmail" name="email" aria-describedby="emailHelp">
@@ -65,12 +66,9 @@
             <div id="passwordHelp2" class="form-text">Retype the Password</div>
           </div>
           <div class="mb-3 form-check">
-            <label class="form-check-label" for="exampleCheck1">by clicking submit you agree to <a class="default-link" href="#">Terms and Conditions</a></label>
+            <label class="form-check-label" for="exampleCheck1">by clicking register you agree to <a class="default-link" href="#">Terms and Conditions</a></label>
           </div>
-          <!-- Generate crypto keys -->
-          <input class="wallet-keys" type="hidden" name="private_key" value="{{detail.private_key}}" readonly>
-          <input class="wallet-keys" type="hidden" name="public_key" value="{{detail.public_key}}" readonly>
-          <button id="bootstrap-override" type="submit" value="register" class="btn btn-primary">Submit</button>
+          <button id="bootstrap-override" type="submit" value="register" class="btn btn-primary">Register</button>
           
         </form>
       </div> <br class="gap-xl-5">

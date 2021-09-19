@@ -23,9 +23,6 @@
         <nav class="navbar navbar navbar-expand-lg navbar-dark bg-dark py-4">
             <div class="container-fluid"> 
               <a class="navbar-brand abs" href="#"><img src="{% static 'img/loggo.png' %}" alt="Crypto Z loggo" style="height: 100px;"> </a>
-              <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNavAltMarkup" aria-controls="navbarNavAltMarkup" aria-expanded="false" aria-label="Toggle navigation">
-                <span class="navbar-toggler-icon"></span>
-              </button>
               <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
                 <div class="navbar-nav ms-auto">
                   <a class="nav-link active" aria-current="page" href="{% url 'index' %}">Home</a>
@@ -35,6 +32,28 @@
               </div>
             </div>
         </nav>
+
+        <!-- Registration form -->
+      <div id="bootstrap-override" class="form-section" align="center">
+        <form id="registrationForm" class="default-form align-items-center" action="login" method="POST">
+          {% csrf_token %}
+          <h1>Log In</h1> <br>
+          <!-- Display message when there's an error logging in the user -->
+          {% for message in messages %}
+            <h5 style="color: red;">{{ message }}</h5>
+          {% endfor %}
+          <div class="mb-3">
+            <label for="InputUsername" class="form-label">Username</label>
+            <input type="username" class="form-control" id="Inputusername" name="username">
+          </div>
+          <div class="mb-3">
+            <label for="InputPassword1" class="form-label">Password</label>
+            <input type="password" class="form-control" id="InputPassword1" name="password">
+          </div>
+          <button id="bootstrap-override" type="submit" value="login" class="btn btn-primary">Login</button>
+          
+        </form>
+      </div>
 
     </body>
 
