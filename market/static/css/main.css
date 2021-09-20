@@ -41,6 +41,6 @@ code {
 }
 
 #bootstrap-override form{
-  text-align: center;
-  display: inline-block;
+  text-align: center !important;
+  display: inline-block !important;
 }

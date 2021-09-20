@@ -46,6 +46,7 @@
         <br>
         <!-- Show unauthenticated users this -->
         {% if not user.is_authenticated %}
+
         <section id="unauthenticated">
           <section class="text-center">
               <div">
@@ -74,16 +75,28 @@
           </section>
         </section>
         {% else %}
+
         <!-- Show authenticated users this -->
         <section id="authenticated" class="text-center">
           <h1>Here are your details {{user.username}}</h1>
-          <div>
-            <h1>BTC Balance</h1><br>
-            {{details.public_key}}
+
+          {% for message in messages %}
+            <h5 style="color: red;">{{ message }}</h5>
+          {% endfor %}
+
+          <div class="float-start col-sm-6">
+            BTC Balance: {{btcdetails.balance_btc}} <br>
+            <button type="submit" value="send" class="bootstrap-override btn btn-primary">Send</button>
+            <button id="bootstrap-override" type="submit" value="receive" class="btn btn-primary">Receive</button>
           </div>
-          
+
+          <div class="float-end col-sm-6">
+            USD Balance: ${{fiatdetails.balance}} <br>
+            <button id="bootstrap-override" type="submit" value="register" class="btn btn-primary">Deposit</button>
+            <button id="bootstrap-override" type="submit" value="register" class="btn btn-primary">Withdraw</button>
+          </div>
         </section>
-        
+
         {% endif%}
 
 

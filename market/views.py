@@ -7,26 +7,32 @@ from bit import Key, PrivateKeyTestnet, wif_to_key
 from datetime import date
 
 def index(request):
-    # if request.user.is_authenticated:
-    #     btcdetails = Btc_Details()
-    #     details.public_key = CustomUser.public_key
-    #     # btcwallet = PrivateKeyTestnet(str(CustomUser.private_key))
-    #     btcaddress_private = CustomUser.private_key
-    #     balance_btc = btcwallet.get_balance('btc')
-    #     balance_usd = btcwallet.get_balance('usd')
-    #     return render(request, 'index.html', {'details' : details})
+    if request.user.is_authenticated:
+        userid = request.user.id
+        # details = CustomUser.objects.select_related().get(id=userid)
+        # details = CustomUser.objects.all().values('id','email','public_key', 'private_key', 'btc_details__balance_btc', 'fiat_details')
+        # details = Btc_Details.objects.all().values('id', 'fiat_details__balance').get(id=userid)
+        userdetails = CustomUser.objects.prefetch_related().get(id=userid)
+        btcdetails = Btc_Details.objects.prefetch_related().get(id=userid)
+        fiatdetails = Fiat_Details.objects.prefetch_related().get(id=userid)
+        transactiondetails = Fiat_Transactions.objects.prefetch_related().get(id=userid)
+        
+        # refreshwallet(request)
+
+        return render(request, 'index.html', {'userdetails' : userdetails, 'btcdetails' : btcdetails, 'fiatdetails' : fiatdetails})
     return render(request, 'index.html')
 
 def register(request):
     # Generate bitcoin key
     bitcoin_key = PrivateKeyTestnet()
-    private_key = bitcoin_key.address
+    public_key = bitcoin_key.address
     # use wallet import format to get bitcoin private key
-    public_key = bitcoin_key.to_wif()
+    private_key = bitcoin_key.to_wif()
 
     balance_btc = bitcoin_key.get_balance('btc')
     balance_usd = bitcoin_key.get_balance('usd')
-    transactions = bitcoin_key.get_transactions()
+    # This query makes loading slow
+    transactions = bitcoin_key.get_transactions() 
 
 
     if request.method == 'POST':
@@ -90,3 +96,19 @@ def login(request):
 def logout(request):
     auth.logout(request)
     return redirect('index')
+
+def refreshwallet(request):
+    
+    userid = request.user.id
+    userdetails = CustomUser.objects.prefetch_related().get(id=userid)
+    btcdetails = Btc_Details.objects.prefetch_related().get(id=userid)
+    fiatdetails = Fiat_Details.objects.prefetch_related().get(id=userid)
+    transactiondetails = Fiat_Transactions.objects.prefetch_related().get(id=userid)
+
+    bitcoin_key = PrivateKeyTestnet(request.user.private_key)
+    balance_btc = bitcoin_key.get_balance('btc')
+    balance_usd = bitcoin_key.get_balance('usd')
+    # adds extra load time
+    transactions = bitcoin_key.get_transactions()
+    # Can delete this
+    messages.info(request, "refreshed")
