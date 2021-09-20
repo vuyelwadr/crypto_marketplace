@@ -44,34 +44,47 @@
         </nav>
         
         <br>
+        <!-- Show unauthenticated users this -->
+        {% if not user.is_authenticated %}
+        <section id="unauthenticated">
+          <section class="text-center">
+              <div">
+                <h2>Buy and Sell Crypto</h2>
+                <p>If you're tired of being blocked by crypto marketplaces due to being from a restricted country then you're in the right place. Crypto Z will allow you to buy and sell bitcoin as you wish with no restrictions</p>
+              </div>  <br>
 
-        <section class="text-center">
-          <div>
-            <div">
-              <h2>Buy and Sell Crypto</h2>
-              <p>If you're tired of being blocked by crypto marketplaces due to being from a restricted country then you're in the right place. Crypto Z will allow you to buy and sell bitcoin as you wish with no restrictions</p>
+            <div>
+                <h2 class="text-center">Create An Account <a class="default-link" href="#">Now</a></h2>
+                <h4 align="center">
+                    <b>And get a Bitcoin wallet for free</b>
+                </h4>
             </div>
-          </div>  <br>
-
-          <div>
-              <h2 class="text-center">Create An Account <a class="default-link" href="#">Now</a></h2>
-              <h4 align="center">
-                  <b>And get a Bitcoin wallet for free</b>
-              </h4>
-          </div>
-      </section>
-        
-        <!-- https://bootstrapious.com/p/bootstrap-navbar-with-logo-->
-        <section class="py-5">
-            <div class="container py-5">
-                <ol class="pl-3">
-                    <li class="mb-3">Register</li>
-                    <li class="mb-3">Deposit money or transfer some crypto into your wallet</li>
-                    <li class="mb-3">Live stress free</li>
-                </ol>
-                <p class="text-muted mt-5">Live with no <u>restrictions</u></p>
-            </div>
+          </section>
+          
+          <!-- https://bootstrapious.com/p/bootstrap-navbar-with-logo-->
+          <section class="py-5">
+              <div class="container py-5">
+                  <ol class="pl-3">
+                      <li class="mb-3">Register</li>
+                      <li class="mb-3">Deposit money or transfer some crypto into your wallet</li>
+                      <li class="mb-3">Live stress free</li>
+                  </ol>
+                  <p class="text-muted mt-5">Live with no <u>restrictions</u></p>
+              </div>
+          </section>
         </section>
+        {% else %}
+        <!-- Show authenticated users this -->
+        <section id="authenticated" class="text-center">
+          <h1>Here are your details {{user.username}}</h1>
+          <div>
+            <h1>BTC Balance</h1><br>
+            {{details.public_key}}
+          </div>
+          
+        </section>
+        
+        {% endif%}
 
 
     </body>

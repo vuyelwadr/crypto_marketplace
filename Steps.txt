@@ -10,3 +10,4 @@ Create index page
 Create loggo
 Create Registration page (user can see and alter public and private keys in the hidden field using inspect element )
 Modify Views to take form input and create a user
+Set up Database
