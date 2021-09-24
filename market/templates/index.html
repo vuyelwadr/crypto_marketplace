@@ -1,105 +1,35 @@
-{% load static %}
+{% extends "base.html" %}
 
-<!DOCTYPE html>
-<html lang="en-uk">
+{% block content %}
+  <!-- Home page for unauthenticated users -->
+  <section id="home-page">
 
-    <head>
-        <meta charset="UTF-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-        <title>Crypto Z</title>
-        <link rel="shortcut icon" type="image/png" href="{% static 'favicon/favicon.ico' %}"/>
-        <link rel="stylesheet" href="{% static 'css/main.css' %}">
-        <!-- bootstrap -->
-        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
-        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script>
-        <!-- <script src="{% static 'js/jquery-3.6.0.min.js' %}"></script> -->
+    <section class="text-center">
+        <div">
+          <h2>Buy and Sell Crypto</h2>
+          <p>If you're tired of being blocked by crypto marketplaces due to being from a restricted country then you're in the right place. Crypto Z will allow you to buy and sell bitcoin as you wish with no restrictions</p>
+        </div>  <br>
 
+      <div>
+          <h2 class="text-center">Create An Account <a class="default-link" href="#">Now</a></h2>
+          <h4 align="center">
+              <b>And get a Bitcoin wallet for free</b>
+          </h4>
+      </div>
+    </section>
+    
+    <!-- https://bootstrapious.com/p/bootstrap-navbar-with-logo-->
+    <section class="py-5">
+        <div class="container py-5">
+            <ol class="pl-3">
+                <li class="mb-3">Register</li>
+                <li class="mb-3">Deposit money or transfer some crypto into your wallet</li>
+                <li class="mb-3">Live stress free</li>
+            </ol>
+            <p class="text-muted mt-5">Live with no <u>restrictions</u></p>
+        </div>
+    </section>
 
-    </head>
+  </section>
 
-    <body>
-         
-        <!-- NAVBAR-->
-        <!-- Loggo from https://www4.flamingtext.com -->
-        <nav class="navbar navbar navbar-expand-lg navbar-dark bg-dark py-4">
-            <div class="container-fluid"> 
-              <a class="navbar-brand abs" href="#"><img src="{% static 'img/loggo.png' %}" alt="Crypto Z loggo" style="height: 100px;"> </a>
-              <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNavAltMarkup" aria-controls="navbarNavAltMarkup" aria-expanded="false" aria-label="Toggle navigation">
-                <span class="navbar-toggler-icon"></span>
-              </button>
-              <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
-                <div class="navbar-nav ms-auto">
-                  <a class="nav-link active" aria-current="page" href="{% url 'index' %}">Home</a>
-                  <!-- Show different nav menu items to logged in and unauthenticated users -->
-                  {% if user.is_authenticated %}
-                  <a class="nav-link">Hello {{user.username}}</a>
-                  <a class="nav-link" href="{% url 'logout' %}">Logout</a>
-                  {% else %}
-                  <a class="nav-link" href="{% url 'register' %}">Register</a>
-                  <a class="nav-link" href="{% url 'login' %}">Login</a>
-                  {% endif %}
-                </div>
-              </div>
-            </div>
-        </nav>
-        
-        <br>
-        <!-- Show unauthenticated users this -->
-        {% if not user.is_authenticated %}
-
-        <section id="unauthenticated">
-          <section class="text-center">
-              <div">
-                <h2>Buy and Sell Crypto</h2>
-                <p>If you're tired of being blocked by crypto marketplaces due to being from a restricted country then you're in the right place. Crypto Z will allow you to buy and sell bitcoin as you wish with no restrictions</p>
-              </div>  <br>
-
-            <div>
-                <h2 class="text-center">Create An Account <a class="default-link" href="#">Now</a></h2>
-                <h4 align="center">
-                    <b>And get a Bitcoin wallet for free</b>
-                </h4>
-            </div>
-          </section>
-          
-          <!-- https://bootstrapious.com/p/bootstrap-navbar-with-logo-->
-          <section class="py-5">
-              <div class="container py-5">
-                  <ol class="pl-3">
-                      <li class="mb-3">Register</li>
-                      <li class="mb-3">Deposit money or transfer some crypto into your wallet</li>
-                      <li class="mb-3">Live stress free</li>
-                  </ol>
-                  <p class="text-muted mt-5">Live with no <u>restrictions</u></p>
-              </div>
-          </section>
-        </section>
-        {% else %}
-
-        <!-- Show authenticated users this -->
-        <section id="authenticated" class="text-center">
-          <h1>Here are your details {{user.username}}</h1>
-
-          {% for message in messages %}
-            <h5 style="color: red;">{{ message }}</h5>
-          {% endfor %}
-
-          <div class="float-start col-sm-6">
-            BTC Balance: {{btcdetails.balance_btc}} <br>
-            <button type="submit" value="send" class="bootstrap-override btn btn-primary">Send</button>
-            <button id="bootstrap-override" type="submit" value="receive" class="btn btn-primary">Receive</button>
-          </div>
-
-          <div class="float-end col-sm-6">
-            USD Balance: ${{fiatdetails.balance}} <br>
-            <button id="bootstrap-override" type="submit" value="register" class="btn btn-primary">Deposit</button>
-            <button id="bootstrap-override" type="submit" value="register" class="btn btn-primary">Withdraw</button>
-          </div>
-        </section>
-
-        {% endif%}
-
-
-    </body>
-
-</html>
+{% endblock %}

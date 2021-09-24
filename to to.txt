@@ -1,4 +1,4 @@
-add strong password verification
+add strong password verification  https://www.section.io/engineering-education/password-strength-checker-javascript/
 change blue buttons on home page to black
 encrypt private keys
 

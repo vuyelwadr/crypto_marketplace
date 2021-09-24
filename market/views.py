@@ -9,6 +9,7 @@ from datetime import date
 def index(request):
     if request.user.is_authenticated:
         userid = request.user.id
+        refreshwallet(request)
         # details = CustomUser.objects.select_related().get(id=userid)
         # details = CustomUser.objects.all().values('id','email','public_key', 'private_key', 'btc_details__balance_btc', 'fiat_details')
         # details = Btc_Details.objects.all().values('id', 'fiat_details__balance').get(id=userid)
@@ -17,9 +18,9 @@ def index(request):
         fiatdetails = Fiat_Details.objects.prefetch_related().get(id=userid)
         transactiondetails = Fiat_Transactions.objects.prefetch_related().get(id=userid)
         
-        # refreshwallet(request)
-
-        return render(request, 'index.html', {'userdetails' : userdetails, 'btcdetails' : btcdetails, 'fiatdetails' : fiatdetails})
+        
+        return render(request, 'dashboard.html', {'userdetails' : userdetails, 'btcdetails' : btcdetails, 'fiatdetails' : fiatdetails})
+        # return render(request, 'index.html', {'userdetails' : userdetails, 'btcdetails' : btcdetails, 'fiatdetails' : fiatdetails})
     return render(request, 'index.html')
 
 def register(request):
@@ -99,16 +100,29 @@ def logout(request):
 
 def refreshwallet(request):
     
+    # load all tables and create objects accessible in the html  file
     userid = request.user.id
     userdetails = CustomUser.objects.prefetch_related().get(id=userid)
     btcdetails = Btc_Details.objects.prefetch_related().get(id=userid)
     fiatdetails = Fiat_Details.objects.prefetch_related().get(id=userid)
     transactiondetails = Fiat_Transactions.objects.prefetch_related().get(id=userid)
 
-    bitcoin_key = PrivateKeyTestnet(request.user.private_key)
-    balance_btc = bitcoin_key.get_balance('btc')
-    balance_usd = bitcoin_key.get_balance('usd')
+    bitcoin_key = PrivateKeyTestnet(userdetails.private_key)
+    private_key = bitcoin_key.to_wif()
+    public_key = bitcoin_key.address
+
     # adds extra load time
-    transactions = bitcoin_key.get_transactions()
-    # Can delete this
-    messages.info(request, "refreshed")
+    # balance_btc = bitcoin_key.get_balance('btc')
+    # balance_usd = bitcoin_key.get_balance('usd')
+    # transactions = bitcoin_key.get_transactions()
+
+    # Temp values during dev will have to delete
+    balance_btc = 0
+    balance_usd = 0
+    transactions = 0
+
+    btcdetail = Btc_Details(userid, public_key=public_key, private_key=private_key, balance_btc=balance_btc, balance_usd=balance_usd, transactions=transactions)
+    btcdetail.save()
+
+    # Shows that the values were refreshed, can delete this after dev
+    messages.info(request, "Text Area")
