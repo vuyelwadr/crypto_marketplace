@@ -1,0 +1,7 @@
+add strong password verification
+change blue buttons on home page to black
+encrypt private keys
+
+do send and receive pages
+do deposit and withdraw pages
+(can use django templates )
