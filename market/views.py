@@ -5,21 +5,14 @@ from django.contrib.auth import authenticate, login
 from django.contrib.auth.models import auth
 from bit import Key, PrivateKeyTestnet, wif_to_key
 from datetime import date
+from pycoingecko import CoinGeckoAPI
 
 def index(request):
     if request.user.is_authenticated:
         userid = request.user.id
-        refreshwallet(request)
-        # details = CustomUser.objects.select_related().get(id=userid)
-        # details = CustomUser.objects.all().values('id','email','public_key', 'private_key', 'btc_details__balance_btc', 'fiat_details')
-        # details = Btc_Details.objects.all().values('id', 'fiat_details__balance').get(id=userid)
-        userdetails = CustomUser.objects.prefetch_related().get(id=userid)
-        btcdetails = Btc_Details.objects.prefetch_related().get(id=userid)
-        fiatdetails = Fiat_Details.objects.prefetch_related().get(id=userid)
-        transactiondetails = Fiat_Transactions.objects.prefetch_related().get(id=userid)
+        details = refreshwallet(request)
         
-        
-        return render(request, 'dashboard.html', {'userdetails' : userdetails, 'btcdetails' : btcdetails, 'fiatdetails' : fiatdetails})
+        return render(request, 'dashboard.html', details)
         # return render(request, 'index.html', {'userdetails' : userdetails, 'btcdetails' : btcdetails, 'fiatdetails' : fiatdetails})
     return render(request, 'index.html')
 
@@ -107,6 +100,10 @@ def refreshwallet(request):
     fiatdetails = Fiat_Details.objects.prefetch_related().get(id=userid)
     transactiondetails = Fiat_Transactions.objects.prefetch_related().get(id=userid)
 
+    cg = CoinGeckoAPI()
+    cg = cg.get_price(ids='bitcoin', vs_currencies='usd')
+    btcprice = cg.get("bitcoin").get("usd")
+
     bitcoin_key = PrivateKeyTestnet(userdetails.private_key)
     private_key = bitcoin_key.to_wif()
     public_key = bitcoin_key.address
@@ -125,4 +122,23 @@ def refreshwallet(request):
     btcdetail.save()
 
     # Shows that the values were refreshed, can delete this after dev
-    messages.info(request, "Text Area")
+    # messages.info(request, "Text Area")
+    details = {'userdetails' : userdetails, 'btcdetails' : btcdetails, 'fiatdetails' : fiatdetails, 'transactiondetails' : transactiondetails, 'btcprice' : btcprice}
+
+    return details
+
+def btc_buy(request):
+
+    details = refreshwallet(request)
+
+    if request.method == 'CHECK':
+        usdamount = request.POST['usdamount']
+        # btcamount = int(usdamount) / details.get("btcprice")
+
+    #     if (fiatdetails.balance > usdamount):
+    #         messages.info(request, "btcdetails.balance_usd")
+    #     else:
+    #         messages.info(request, "Insufficient funds")
+    # messages.info(request, details.get("fiatdetails"))
+    
+    return render(request, 'btc_buy.html', details)
