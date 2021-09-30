@@ -1,4 +1,6 @@
 {% extends "base.html" %}
+{% load static %}
+
 
 {% block content %}
     <!-- BTC Buy Dashboard -->
@@ -11,12 +13,9 @@
         </div>
 
         <div id="bootstrap-override" class="form-section" align="center">
-            <form id="registrationForm" class="default-form align-items-center" action="" method="CHECK">
+            <form id="btc-buy-Form" class="default-form align-items-center" method="POST">
                 {% csrf_token %}
-                <!-- Display message when there's an error logging in the user -->
-                {% for message in messages %}
-                  <h5 style="color: red;">{{ message }}</h5>
-                {% endfor %}
+
                 <div class="mb-3">
                   <label for="USD-amount" class="form-label">USD amount</label>
                   <input class="form-control" id="usdamount" name="usdamount">
@@ -25,15 +24,17 @@
                 <button id="bootstrap-override" type="submit" value="submit" class="btn btn-primary">Buy</button>
 
             </form>
-        </div>
-            
-            <!-- BTC Price Widget -->
-            <div style="width: 250px; height:220px; background-color: #FFFFFF; overflow:hidden; box-sizing: border-box; border: 1px solid #56667F; border-radius: 4px; text-align: right; line-height:14px; block-size:220px; font-size: 12px; font-feature-settings: normal; text-size-adjust: 100%; box-shadow: inset 0 -20px 0 0 #56667F;padding:1px;padding: 0px; margin: 0px;"><div style="height:200px; padding:0px; margin:0px; width: 100%;"><iframe src="https://widget.coinlib.io/widget?type=single_v2&theme=light&coin_id=859&pref_coin_id=1505" width="250" height="196px" scrolling="auto" marginwidth="0" marginheight="0" frameborder="0" border="0" style="border:0;margin:0;padding:0;line-height:14px;"></iframe></div><div style="color: #FFFFFF; line-height: 14px; font-weight: 400; font-size: 11px; box-sizing: border-box; padding: 2px 6px; width: 100%; font-family: Verdana, Tahoma, Arial, sans-serif;"><a href="https://coinlib.io" target="_blank" style="font-weight: 500; color: #FFFFFF; text-decoration:none; font-size:11px">Cryptocurrency Prices</a>&nbsp;by Coinlib</div></div>
 
-        
+            <!-- Display message when user clicks buy -->
+            {% for message in messages %}
+            <h5 style="color: red;">{{ message }}</h5>
+          {% endfor %}
+
+        </div>
     </section>
+
     
-    <script>
+    <!-- <script>
         var useramount = document.getElementById('usdamount');
         useramount.addEventListener('change', btcamount);
 
@@ -43,6 +44,12 @@
             btcamount = amount / "{{btcprice}}";
             document.getElementById("btcamount").innerHTML = "You Get: " + btcamount + "BTC"; 
         }
-    </script>
+    </script> -->
 
+{% endblock %}
+
+{% block scripts %}
+    <!-- save price variable so you can access it inside the script -->
+    <script>var btcprice = "{{btcprice}}" </script>
+    <script src="{% static 'js/youget.js'%}"></script>
 {% endblock %}

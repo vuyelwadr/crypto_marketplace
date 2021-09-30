@@ -24,8 +24,9 @@ class Fiat_Details(models.Model):
 
 class Fiat_Transactions(models.Model):
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, default=None, null=True)
-    transaction_types = [('Withdrawal', 'Withdrawal'), ('Deposit','Deposit')]
+    transaction_types = [('Withdrawal', 'Withdrawal'), ('Deposit','Deposit'), ('Buy','Buy'), ('Sell','Sell')]
 
+    userid = models.CharField(max_length=10)
     date = models.CharField(max_length=10)
     amount = models.CharField(max_length=50)
     transaction_type = models.CharField(max_length=10, choices=transaction_types)

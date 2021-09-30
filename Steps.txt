@@ -12,4 +12,5 @@ Create Registration page (user can see and alter public and private keys in the 
 Modify Views to take form input and create a user
 Set up Database
 Modify Dashboard
-add coingecko api (https://algotrading101.com/learn/coingecko-api-guide/)
+Add coingecko api (https://algotrading101.com/learn/coingecko-api-guide/)
+30/09/2021 Create working Buy page
