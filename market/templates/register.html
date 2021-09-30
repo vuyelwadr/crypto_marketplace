@@ -4,6 +4,7 @@
   <!-- Registration form -->
   <section id="registration-form">
 
+    <!-- Put bootstrap override id to override default bootstrap css on selected elements -->
     <div id="bootstrap-override" class="form-section" align="center">
       <form id="registrationForm" class="default-form align-items-center" action="register" method="POST">
         {% csrf_token %}
@@ -35,7 +36,7 @@
         <div class="mb-3 form-check">
           <label class="form-check-label" for="exampleCheck1">by clicking register you agree to <a class="default-link" href="#">Terms and Conditions</a></label>
         </div>
-        <button id="bootstrap-override" type="submit" value="register" class="btn btn-primary">Register</button>
+        <button type="submit" value="register" class="btn btn-primary">Register</button>
       </form>
     </div> <br class="gap-xl-5">
     <div align="center">

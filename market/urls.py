@@ -7,4 +7,5 @@ urlpatterns = [
     path('login', views.login, name='login'),
     path('logout', views.logout, name='logout'),
     path('btc_buy', views.btc_buy, name='btc_buy'),
+    path('btc_sell', views.btc_sell, name= 'btc_sell'),
 ]

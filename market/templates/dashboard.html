@@ -9,20 +9,21 @@
           <h5 style="color: red;">{{ message }}</h5>
         {% endfor %}
 
-        <div class="float-start col-sm-6">
+        <div id="bootstrap-override" class="float-start col-sm-6">
           BTC Balance: {{btcdetails.balance_btc}} <br>
           BTC Balance in USD: {{btcdetails.balance_usd}} <br>
-          <a href="btc_buy"> <button type="submit" value="buy" class="btn btn-primary">Buy</button> </a>
+          <a href="{% url 'btc_buy' %}"> <button type="submit" value="buy" class="btn btn-primary">Buy</button> </a>
+          <a href="{% url 'btc_sell' %}"><button type="submit" value="sell" class="bootstrap-override btn btn-primary">Sell</button> </a>
           <button type="submit" value="send" class="bootstrap-override btn btn-primary">Send</button>
           <button type="submit" value="receive" class="btn btn-primary">Receive</button>
           <button type="submit" value="withdraw" class="btn btn-primary">Withdraw</button>
         </div>
 
-        <div class="float-end col-sm-6">
+        <div id="bootstrap-override" class="float-end col-sm-6">
           USD Balance: ${{fiatdetails.balance}} <br>
-          <button id="bootstrap-override" type="submit" value="deposit" class="btn btn-primary">Deposit</button>
-          <button id="bootstrap-override" type="submit" value="withdraw" class="btn btn-primary">Withdraw</button>
-          <button id="bootstrap-override" type="submit" value="history" class="btn btn-primary">History</button>
+          <button type="submit" value="deposit" class="btn btn-primary">Deposit</button>
+          <button type="submit" value="withdraw" class="btn btn-primary">Withdraw</button>
+          <button type="submit" value="history" class="btn btn-primary">History</button>
         </div>
       </section>
 

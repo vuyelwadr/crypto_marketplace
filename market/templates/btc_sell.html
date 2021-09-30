@@ -1,0 +1,14 @@
+{% extends "btc_buy.html" %}
+{% load static %}
+
+
+<!-- JavaScript to modify elements to suit sell page -->
+{% block scripts %}
+<!-- Used block.super to get contents of parent template btc_buy -->
+{{ block.super }}
+    <script>
+        document.getElementById("make-transaction").innerHTML = "Sell";
+        document.getElementById("btc-buy").style.display = "none";
+        document.getElementById("btc-sell").style.display = "block";
+    </script>
+{% endblock %}

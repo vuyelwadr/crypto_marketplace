@@ -159,6 +159,31 @@ def btc_buy(request):
     
     return render(request, 'btc_buy.html', details)
 
+def btc_sell(request):
+    details = refreshwallet(request)
+    fiatdetail = details.get("fiatdetails")
+    userdetails = details.get("userdetails")
+    if request.method == 'POST':
+        usdamount = request.POST['usdamount']
+        # btcamount = int(usdamount) / details.get("btcprice")
+        
+
+        # if (fiatdetail.balance > usdamount):
+        #     admindetails = CustomUser.objects.prefetch_related().get(id=1)
+        #     adminwallet = PrivateKeyTestnet(admindetails.private_key)
+
+        #     try:
+        #         tx_1 = adminwallet.send([(userdetails.public_key, usdamount, 'usd')])
+        #     except :
+        #         messages.info(request,"Transaction failed")
+        #     else:
+        #         fiat(request, "Buy", usdamount)
+        #         details = refreshwallet(request)
+        #         messages.success(request,"Transaction Successful, transaction id: " + tx_1 )
+
+        # else:
+        #     messages.info(request, "Insufficient funds")
+    return render(request, 'btc_sell.html', details)
 
 def fiat(request,transaction, sum):
     details = refreshwallet(request)
