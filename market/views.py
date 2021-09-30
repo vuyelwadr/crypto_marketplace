@@ -136,18 +136,16 @@ def btc_buy(request):
     fiatdetail = details.get("fiatdetails")
     userdetails = details.get("userdetails")
     if request.method == 'POST':
-        usdamount = request.POST['usdamount']
-        # btcamount = int(usdamount) / details.get("btcprice")
-        
-
+        usdamount = request.POST['usdamount']  
+        # Admin account has id 1
         if (fiatdetail.balance > usdamount):
             admindetails = CustomUser.objects.prefetch_related().get(id=1)
             adminwallet = PrivateKeyTestnet(admindetails.private_key)
 
             try:
-                tx_1 = adminwallet.send([(userdetails.public_key, usdamount, 'usd')])
+                tx_1 = adminwallet.send([(userdetails.public_key, usdamount, 'usd')], fee=1000, absolute_fee=True)
             except :
-                messages.info(request,"Transaction failed")
+                messages.info(request,"Transaction Failed")
             else:
                 fiat(request, "Buy", usdamount)
                 details = refreshwallet(request)
@@ -155,34 +153,33 @@ def btc_buy(request):
 
         else:
             messages.info(request, "Insufficient funds")
-    # messages.info(request, fiatdetail.balance)
-    
+
     return render(request, 'btc_buy.html', details)
 
 def btc_sell(request):
     details = refreshwallet(request)
     fiatdetail = details.get("fiatdetails")
+    btcdetails = details.get("btcdetails")
     userdetails = details.get("userdetails")
     if request.method == 'POST':
         usdamount = request.POST['usdamount']
-        # btcamount = int(usdamount) / details.get("btcprice")
-        
 
-        # if (fiatdetail.balance > usdamount):
-        #     admindetails = CustomUser.objects.prefetch_related().get(id=1)
-        #     adminwallet = PrivateKeyTestnet(admindetails.private_key)
 
-        #     try:
-        #         tx_1 = adminwallet.send([(userdetails.public_key, usdamount, 'usd')])
-        #     except :
-        #         messages.info(request,"Transaction failed")
-        #     else:
-        #         fiat(request, "Buy", usdamount)
-        #         details = refreshwallet(request)
-        #         messages.success(request,"Transaction Successful, transaction id: " + tx_1 )
+        if (btcdetails.balance_usd >= usdamount):
+            admindetails = CustomUser.objects.prefetch_related().get(id=1)
+            userwallet = PrivateKeyTestnet(userdetails.private_key)
 
-        # else:
-        #     messages.info(request, "Insufficient funds")
+            try:
+                tx_1 = userwallet.send([(admindetails.public_key, usdamount, 'usd')], fee=1000, absolute_fee=True)
+            except :
+                messages.info(request,"Transaction Failed")
+            else:
+                fiat(request, "Sell", usdamount)
+                details = refreshwallet(request)
+                messages.success(request,"Transaction Successful, transaction id: " + tx_1 )
+        else:
+            messages.info(request, "Insufficient funds")
+
     return render(request, 'btc_sell.html', details)
 
 def fiat(request,transaction, sum):
@@ -194,8 +191,11 @@ def fiat(request,transaction, sum):
     if (transaction == "Buy"):
         fiatdetail = Fiat_Details(userid, balance=(int(fiatdetails.balance)-int(sum))) 
         fiatdetail.save()
-        # fiattransactions = Fiat_Transactions(date=str(date.today()), amount=sum, transaction_type='Buy', user_id=userid, notes='BTC Buy')
-        # Use create() to create a new transaction instead of saving over old one
-        # fiattransactions.create()
 
         fiattransactions = Fiat_Transactions.objects.create(userid=userid, date=str(date.today()), amount=sum, transaction_type='Buy', notes='BTC Buy')
+    
+    elif (transaction == "Sell"):
+        fiatdetail = Fiat_Details(userid, balance=(int(fiatdetails.balance)+int(sum))) 
+        fiatdetail.save()
+
+        fiattransactions = Fiat_Transactions.objects.create(userid=userid, date=str(date.today()), amount=sum, transaction_type='Sell', notes='BTC Sell')
