@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import User_Requests
+from .models import User_Requests, Reviews
 from django.http import HttpResponse
 from django.contrib import messages
 from .models import CustomUser, Btc_Details, Fiat_Details, Fiat_Transactions, User_Requests
@@ -9,9 +9,9 @@ from datetime import date
 class Requests(admin.ModelAdmin):
     change_form_template = "user_requests.html"
 
-    list_display = ("userid", "reference", "amount", "request", "status")
+    list_display = ("user_id", "reference", "amount", "request", "status")
     list_filter = ("status",)
-    search_fields = ["userid", "reference", "amount", "bank_name"]
+    search_fields = ["user_id", "reference", "amount", "bank_name"]
 
     class Meta:
         model = User_Requests
@@ -60,12 +60,15 @@ def fiat(request, id):
             
 
 
+class Review(admin.ModelAdmin):
+    list_display = ("user_id", "review_title", "sentiment_score", "sentiment", "creation_date")
+    list_filter = ("user_id", "sentiment")
+    search_fields = ["user_id", "sentiment" "review_title", "creation_date"]
 
+    class Meta:
+        model = Reviews
+        db_table = "tbl_temp_users"
 
-    # actions = ['completed']
-    # @admin.action(description='Mark selected Requests as completed', permissions=['change'])
-    # def completed(self, request, queryset):
-    #     queryset.update(status='Completed')
-    # admin.site.add_action(completed) to add action globally
 
 admin.site.register(User_Requests, Requests)
+admin.site.register(Reviews, Review)

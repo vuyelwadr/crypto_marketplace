@@ -26,7 +26,7 @@ class Fiat_Transactions(models.Model):
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, default=None, null=True)
     transaction_types = [('Withdrawal', 'Withdrawal'), ('Deposit','Deposit'), ('Buy','Buy'), ('Sell','Sell')]
 
-    userid = models.CharField(max_length=10)
+    # userid = models.CharField(max_length=10)
     date = models.CharField(max_length=10)
     amount = models.IntegerField()
     transaction_type = models.CharField(max_length=10, choices=transaction_types)
@@ -37,7 +37,7 @@ class User_Requests(models.Model):
     request_type = [('Deposit','Deposit'), ('Withdraw', 'Withdraw')]
     status_type = [('Pending','Pending'), ('Completed', 'Completed'), ('Rejected', 'Rejected')]
 
-    userid = models.CharField(max_length=10)
+    # userid = models.CharField(max_length=10)
     amount = models.IntegerField()
     request = models.CharField(max_length=10, choices=request_type)
     reference = models.CharField(max_length=12)
@@ -46,3 +46,19 @@ class User_Requests(models.Model):
     proof = models.ImageField(upload_to='uploads/proof/%Y/%m/%d/', max_length=50)
     date = models.CharField(max_length=10)
     status = models.CharField(max_length=10, choices=status_type)
+
+
+class Reviews(models.Model):
+    sentiment_choices = [('Positive','Positive'), ('Negative','Negative'), ('Neutral','Neutral')]
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, default=None, null=True)
+    author_email = models.EmailField()
+    review_title = models.CharField(max_length=300, null=True)
+    review_body = models.TextField(blank=True)
+    creation_date = models.DateTimeField(auto_now_add=True, blank=True)
+    sentiment_score = models.DecimalField(max_digits=5, decimal_places=4)
+    sentiment = models.CharField(max_length=10, choices=sentiment_choices)
+   
+    def is_critical(self):
+        return True if self.sentiment_score < -0.2 else False
+    def __str__(self):
+        return self.review_title

@@ -1,5 +1,5 @@
 from django.shortcuts import render, redirect
-from .models import CustomUser, Btc_Details, Fiat_Details, Fiat_Transactions, User_Requests
+from .models import CustomUser, Btc_Details, Fiat_Details, Fiat_Transactions, User_Requests, Reviews
 from django.contrib import messages
 from django.contrib.auth import authenticate, login
 from django.contrib.auth.models import auth
@@ -10,17 +10,44 @@ import random
 import string  
 import secrets
 from django.utils.safestring import mark_safe
+import requests
 
 
 def index(request):
-    try:
-        if request.user.is_authenticated:
-            userid = request.user.id
-            details = refreshwallet(request)
-            
-            return render(request, 'dashboard.html', details)
-    except:
-        return render(request, 'index.html')
+    if request.user.is_authenticated:
+        userid = request.user.id
+        details = refreshwallet(request)
+        userdetails = details.get("userdetails")
+
+        if request.method == 'POST':
+            url = "https://twinword-sentiment-analysis.p.rapidapi.com/analyze/"
+            headers = {
+                'content-type': "application/x-www-form-urlencoded",
+                'x-rapidapi-host': "twinword-sentiment-analysis.p.rapidapi.com",
+                'x-rapidapi-key': "42e11407a8msh3e7bfe671792741p13625fjsn79c7af84436e"
+                }
+
+            title = request.POST['title']
+            body = request.POST['review']
+
+            author = userid
+            author_email = userdetails.email
+
+            payload = {'text' : body}
+            response = requests.request("POST", url, data=payload, headers=headers)
+            temp_score = response.json()
+            score = temp_score.get('score')
+
+            if score>0:
+                sentiment = "Positive"
+            elif score== 0:
+                sentiment = "Neutral"
+            else:
+                sentiment = "Negative"
+            reviews = Reviews.objects.create(user_id=userid, author_email=userdetails.email, review_title=title, review_body=body, creation_date=str(date.today()), sentiment_score=score, sentiment=sentiment)
+            messages.success(request, "Review Submitted")
+        
+        return render(request, 'dashboard.html', details)
 
     return render(request, 'index.html')
 
@@ -257,13 +284,13 @@ def fiat(request,transaction, sum):
         fiatdetail = Fiat_Details(userid, balance=(int(fiatdetails.balance)-int(sum))) 
         fiatdetail.save()
 
-        fiattransactions = Fiat_Transactions.objects.create(userid=userid, date=str(date.today()), amount=sum, transaction_type='Buy', notes='BTC Buy')
+        fiattransactions = Fiat_Transactions.objects.create(user_id=userid, date=str(date.today()), amount=sum, transaction_type='Buy', notes='BTC Buy')
     
     elif (transaction == "Sell"):
         fiatdetail = Fiat_Details(userid, balance=(int(fiatdetails.balance)+int(sum))) 
         fiatdetail.save()
 
-        fiattransactions = Fiat_Transactions.objects.create(userid=userid, date=str(date.today()), amount=sum, transaction_type='Sell', notes='BTC Sell')
+        fiattransactions = Fiat_Transactions.objects.create(user_id=userid, date=str(date.today()), amount=sum, transaction_type='Sell', notes='BTC Sell')
 
 
 
@@ -272,6 +299,6 @@ def user_request(request, t_type, amount, reference, proof, bank, account):
  
         # if user enters a non integer value throw a transaction
     if (t_type == "Deposit"):
-        userrequest = User_Requests.objects.create(userid=userid, amount=amount, request=t_type, reference=reference, proof=proof, date=str(date.today()), status="Pending")
+        userrequest = User_Requests.objects.create(user_id=userid, amount=amount, request=t_type, reference=reference, proof=proof, date=str(date.today()), status="Pending")
     elif (t_type == "Withdraw"):
-        userrequest = User_Requests.objects.create(userid=userid, amount=amount, request=t_type, reference=reference, date=str(date.today()), status="Pending")
+        userrequest = User_Requests.objects.create(user_id=userid, amount=amount, request=t_type, reference=reference, date=str(date.today()), status="Pending")
