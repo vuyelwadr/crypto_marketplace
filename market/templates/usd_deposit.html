@@ -1,0 +1,50 @@
+{% extends "base.html" %}
+{% load static %}
+
+
+{% block content %}
+    <!-- USD deposit Dashboard -->
+    <section id="usd_deposit" align="center">
+        <div align="center">
+            <h1>{{user.username}}</h1>
+            <h5>Deposit into the following account using the reference displayed</h5>
+            Bank Name: Nedbank <br>
+            Account Number: 0 <br>
+            Reference: {{reference}} <br>
+            USD Balance: ${{fiatdetails.balance}} <br>
+        </div>
+
+        <div id="bootstrap-override" class="form-section" align="center">
+            <form id="usd-deposit-form" class="default-form align-items-center" method="POST" enctype="multipart/form-data">
+                {% csrf_token %}
+
+                <div class="mb-3">  
+                  <label for="USD-amount" class="form-label">USD amount</label>
+                  <input class="form-control" id="usdamount_fiat" name="usdamount">
+                </div>
+                <div class="mb-3">
+                    <label for="proof">Upload proof</label>
+                    <input type="file" id="proof" name="proof" accept="image/*"> 
+                </div>
+                <h2 id="usd-deposit"></h2>
+                <h2 id="usd-withdraw" style="display:none"></h2>
+                <button id="make-transaction" type="submit" value="submit" class="btn btn-primary"><Div>Deposit</Div></button>
+
+            </form>
+
+            <!-- Display message when user clicks buy -->
+            {% for message in messages %}
+            <h5 style="color: red;">{{ message }}</h5>
+          {% endfor %}
+
+        </div>
+    </section>
+
+
+{% endblock %}
+
+{% block scripts %}
+    <!-- save price variable so you can access it inside the script -->
+    <script>var usdbalance = "{{fiatdetails.balance}}" </script>
+    <script src="{% static 'js/youget.js'%}"></script>
+{% endblock %}

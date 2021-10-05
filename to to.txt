@@ -5,3 +5,44 @@ encrypt private keys
 do send and receive pages
 do deposit and withdraw pages
 (can use django templates )
+
+
+Deposit feature
+
+-------------------------------------
+
+make upload form
+
+allow admin to see form and change from pending to "Accepted or Rejected"
+if accepted then add transaction details to database
+
+
+model
+
+User_Requests()
+type : Deposit/Withdraw
+amount : int
+Reference : Random string
+date : date of transaction (yyy/mm/dd)
+Status : Pending/Completed/Rejected
+
+how it'll work:
+
+user clicks deposit 
+random string reference generated and displayed to user
+user makes the transfer using the given reference.
+User enters the amount transfered, their reference and uploads proof of payment.
+user presses submit and info saved to db User_Requests
+files uploaded to folder media yy/mm (using date filed) with reference as name
+
+admin loggs in
+admin is shown all User_Requests with status "Pending"
+admin checks the details and if everything is fine and reflects in the account then changes status to accepted
+when admin changes status to accepted save transaction to table "Fiat_Transactions" with the following fields from transaction_type mapping to User_Requests()
+date = date
+amount = amount
+transaction_type = type
+notes = reference
+
+
+* later allow user to view status of their transactions

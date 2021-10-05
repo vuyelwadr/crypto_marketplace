@@ -1,20 +1,27 @@
 from django.shortcuts import render, redirect
-from .models import CustomUser, Btc_Details, Fiat_Details, Fiat_Transactions
+from .models import CustomUser, Btc_Details, Fiat_Details, Fiat_Transactions, User_Requests
 from django.contrib import messages
 from django.contrib.auth import authenticate, login
 from django.contrib.auth.models import auth
 from bit import Key, PrivateKeyTestnet, wif_to_key
 from datetime import date
 from pycoingecko import CoinGeckoAPI
+import random   
+import string  
+import secrets
+from django.utils.safestring import mark_safe
 
 
 def index(request):
-    if request.user.is_authenticated:
-        userid = request.user.id
-        details = refreshwallet(request)
-        
-        return render(request, 'dashboard.html', details)
-        # return render(request, 'index.html', {'userdetails' : userdetails, 'btcdetails' : btcdetails, 'fiatdetails' : fiatdetails})
+    try:
+        if request.user.is_authenticated:
+            userid = request.user.id
+            details = refreshwallet(request)
+            
+            return render(request, 'dashboard.html', details)
+    except:
+        return render(request, 'index.html')
+
     return render(request, 'index.html')
 
 def register(request):
@@ -36,38 +43,41 @@ def register(request):
         password = request.POST['password']
         password2 = request.POST['password2']
 
-        # make sure password matches
-        if password==password2:       
-            # make sure email isn't taken
-            if CustomUser.objects.filter(email=email).exists():
-                messages.info(request, 'Email Taken')
-                return redirect('register')
-                # make sure eusernamemail isn't taken
-            elif CustomUser.objects.filter(username=username).exists():
-                messages.info(request, 'Username Taken')
-                return redirect('register')
+        try:
+            # make sure password matches
+            if password==password2:       
+                # make sure email isn't taken
+                if CustomUser.objects.filter(email=email).exists():
+                    messages.info(request, 'Email Taken')
+                    return redirect('register')
+                    # make sure eusernamemail isn't taken
+                elif CustomUser.objects.filter(username=username).exists():
+                    messages.info(request, 'Username Taken')
+                    return redirect('register')
+                else:
+                    user = CustomUser.objects.create_user(username=username, email=email, password=password, private_key=private_key, public_key=public_key)
+                    user.save()
+
+                    # Link user details to Btc_Details Table
+                    btcdetail = Btc_Details(user.id, public_key=public_key, private_key=private_key, balance_btc=balance_btc, balance_usd=balance_usd, transactions=transactions  )
+                    btcdetail.save()
+
+                    # Link user details to Fiat_Details Table and Give the user 1000USD to start with
+                    fiatdetail = Fiat_Details(user.id, balance=1000) 
+                    fiatdetail.save()
+
+                    # Record 1000USD deposit into user's account
+                    fiattransactions = Fiat_Transactions(user.id, date=str(date.today()), amount=1000, transaction_type='Deposit', notes='Initial Deposit')
+                    fiattransactions.save()
+
+                    print('User Created')
+                    return redirect('login')
+
             else:
-                user = CustomUser.objects.create_user(username=username, email=email, password=password, private_key=private_key, public_key=public_key)
-                user.save()
-
-                # Link user details to Btc_Details Table
-                btcdetail = Btc_Details(user.id, public_key=public_key, private_key=private_key, balance_btc=balance_btc, balance_usd=balance_usd, transactions=transactions  )
-                btcdetail.save()
-
-                # Link user details to Fiat_Details Table and Give the user 1000USD to start with
-                fiatdetail = Fiat_Details(user.id, balance=1000) 
-                fiatdetail.save()
-
-                # Record 1000USD deposit into user's account
-                fiattransactions = Fiat_Transactions(user.id, date=str(date.today()), amount=1000, transaction_type='Deposit', notes='Initial Deposit')
-                fiattransactions.save()
-
-                print('User Created')
-                return redirect('login')
-
-        else:
-            messages.info(request, 'Password Not Matching')
-            return redirect('register')
+                messages.info(request, 'Password Not Matching')
+                return redirect('register')
+        except:
+            return redirect('/')
         return redirect('/')
 
     else:
@@ -92,6 +102,112 @@ def logout(request):
     auth.logout(request)
     return redirect('index')
 
+
+def btc_buy(request):
+
+    details = refreshwallet(request)
+    fiatdetail = details.get("fiatdetails")
+    userdetails = details.get("userdetails")
+    if request.method == 'POST':
+        usdamount = request.POST['usdamount']  
+        # Admin account has id 1
+
+        try:
+
+            if (fiatdetail.balance > int(usdamount)):
+                admindetails = CustomUser.objects.prefetch_related().get(id=1)
+                adminwallet = PrivateKeyTestnet(admindetails.private_key)
+                tx_1 = adminwallet.send([(userdetails.public_key, usdamount, 'usd')], fee=1000, absolute_fee=True)
+                fiat(request, "Buy", usdamount)
+                details = refreshwallet(request)
+            else:
+                messages.info(request, "Insufficient funds")
+        except:
+            messages.info(request,"Transaction Failed")
+            
+        else:
+            messages.success(request, mark_safe("Transaction Successful, transaction id: " + tx_1 + "<br/>" +
+                "To see your transaction use the following link: <br/> https://blockstream.info/testnet/tx/" + tx_1))
+
+
+    return render(request, 'btc_buy.html', details)
+
+def btc_sell(request):
+    details = refreshwallet(request)
+    fiatdetail = details.get("fiatdetails")
+    btcdetails = details.get("btcdetails")
+    userdetails = details.get("userdetails")
+    if request.method == 'POST':
+        usdamount = request.POST['usdamount']
+
+        try:
+            if (btcdetails.balance_usd >= usdamount):
+                admindetails = CustomUser.objects.prefetch_related().get(id=1)
+                userwallet = PrivateKeyTestnet(userdetails.private_key)
+
+                tx_1 = userwallet.send([(admindetails.public_key, usdamount, 'usd')], fee=1000, absolute_fee=True)
+                fiat(request, "Sell", usdamount)
+                details = refreshwallet(request)
+            else:
+                messages.info(request, "Insufficient funds")
+        except :
+            messages.info(request,"Transaction Failed")
+        else:
+            messages.success(request, mark_safe("Transaction Successful, transaction id: " + tx_1 + "<br/>" +
+            "To see your transaction use the following link: <br/> https://blockstream.info/testnet/tx/" + tx_1))
+        
+
+    return render(request, 'btc_sell.html', details)
+
+
+def usd_deposit(request):
+    details = refreshwallet(request)
+    # Number of digits in reference
+    num = 12
+    reference = ''.join(secrets.choice(string.ascii_letters + string.digits) for x in range(num))
+    details['reference'] = reference
+
+    if request.method == 'POST':
+        usdamount = request.POST['usdamount']
+        proof = request.FILES['proof']
+
+        try:
+            user_request(request, "Deposit", usdamount, reference, proof, "", "")
+        except:
+            messages.info(request,"Transaction Failed")
+        else:
+            messages.success(request,"Transaction Successful")
+
+            
+
+    return render(request, 'usd_deposit.html',details)
+
+def usd_withdraw(request):
+    details = refreshwallet(request)
+    fiatdetails = details.get("fiatdetails")
+    # Number of digits in reference
+    num = 12
+    reference = ''.join(secrets.choice(string.ascii_letters + string.digits) for x in range(num))
+    details['reference'] = reference
+
+    if request.method == 'POST':
+        usdamount = request.POST['usdamount']
+        bank_name = request.POST['bank_name']
+        account_number = request.POST['account_number']
+
+        try:
+            if (int(usdamount)<int(fiatdetails.balance) and len(bank_name)>0 and len(account_number)>0) :
+                user_request(request, "Withdraw", usdamount, reference, "", bank_name, account_number )
+            else:
+                messages.info(request,"Transaction Failed")
+        except:
+            messages.info(request,"Transaction Failed")
+        else:
+            messages.success(request,"Transaction Successful")
+
+    return render(request, 'usd_withdraw.html',details)
+
+
 def refreshwallet(request):
     
     # load all tables and create objects accessible in the html  file
@@ -109,12 +225,12 @@ def refreshwallet(request):
     # adds extra load time
     balance_btc = bitcoin_key.get_balance('btc')
     balance_usd = bitcoin_key.get_balance('usd')
-    transactions = bitcoin_key.get_transactions()
+    # transactions = bitcoin_key.get_transactions()
 
     # Temp values during dev will have to delete
     # balance_btc = 0
     # balance_usd = 0
-    # transactions = 0
+    transactions = 0
 
     btcdetail = Btc_Details(userid, public_key=public_key, private_key=private_key, balance_btc=balance_btc, balance_usd=balance_usd, transactions=transactions)
     btcdetail.save()
@@ -130,57 +246,6 @@ def refreshwallet(request):
 
     return details
 
-def btc_buy(request):
-
-    details = refreshwallet(request)
-    fiatdetail = details.get("fiatdetails")
-    userdetails = details.get("userdetails")
-    if request.method == 'POST':
-        usdamount = request.POST['usdamount']  
-        # Admin account has id 1
-        if (fiatdetail.balance > usdamount):
-            admindetails = CustomUser.objects.prefetch_related().get(id=1)
-            adminwallet = PrivateKeyTestnet(admindetails.private_key)
-
-            try:
-                tx_1 = adminwallet.send([(userdetails.public_key, usdamount, 'usd')], fee=1000, absolute_fee=True)
-            except :
-                messages.info(request,"Transaction Failed")
-            else:
-                fiat(request, "Buy", usdamount)
-                details = refreshwallet(request)
-                messages.success(request,"Transaction Successful, transaction id: " + tx_1 )
-
-        else:
-            messages.info(request, "Insufficient funds")
-
-    return render(request, 'btc_buy.html', details)
-
-def btc_sell(request):
-    details = refreshwallet(request)
-    fiatdetail = details.get("fiatdetails")
-    btcdetails = details.get("btcdetails")
-    userdetails = details.get("userdetails")
-    if request.method == 'POST':
-        usdamount = request.POST['usdamount']
-
-
-        if (btcdetails.balance_usd >= usdamount):
-            admindetails = CustomUser.objects.prefetch_related().get(id=1)
-            userwallet = PrivateKeyTestnet(userdetails.private_key)
-
-            try:
-                tx_1 = userwallet.send([(admindetails.public_key, usdamount, 'usd')], fee=1000, absolute_fee=True)
-            except :
-                messages.info(request,"Transaction Failed")
-            else:
-                fiat(request, "Sell", usdamount)
-                details = refreshwallet(request)
-                messages.success(request,"Transaction Successful, transaction id: " + tx_1 )
-        else:
-            messages.info(request, "Insufficient funds")
-
-    return render(request, 'btc_sell.html', details)
 
 def fiat(request,transaction, sum):
     details = refreshwallet(request)
@@ -199,3 +264,14 @@ def fiat(request,transaction, sum):
         fiatdetail.save()
 
         fiattransactions = Fiat_Transactions.objects.create(userid=userid, date=str(date.today()), amount=sum, transaction_type='Sell', notes='BTC Sell')
+
+
+
+def user_request(request, t_type, amount, reference, proof, bank, account):
+    userid = request.user.id;
+ 
+        # if user enters a non integer value throw a transaction
+    if (t_type == "Deposit"):
+        userrequest = User_Requests.objects.create(userid=userid, amount=amount, request=t_type, reference=reference, proof=proof, date=str(date.today()), status="Pending")
+    elif (t_type == "Withdraw"):
+        userrequest = User_Requests.objects.create(userid=userid, amount=amount, request=t_type, reference=reference, date=str(date.today()), status="Pending")

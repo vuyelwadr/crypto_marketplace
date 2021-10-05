@@ -14,4 +14,6 @@ Set up Database
 Modify Dashboard
 Add coingecko api (https://algotrading101.com/learn/coingecko-api-guide/)
 30/09/2021 Create working Buy page
-30/09/2021 Create Sell page (admin pays fee when user buys and vise versa)
+30/09/2021 Create Working Sell page (admin pays fee when user buys and vise versa)
+2/10/2021 Created Deposit page
+5/10/2021 Modified admin page (https://django-tips.avilpage.com/en/latest/admin_custom_admin_actions.html)

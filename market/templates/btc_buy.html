@@ -18,7 +18,7 @@
 
                 <div class="mb-3">
                   <label for="USD-amount" class="form-label">USD amount</label>
-                  <input class="form-control" id="usdamount" name="usdamount">
+                  <input class="form-control" id="usdamount_crypto" name="usdamount">
                 </div>
                 <h2 id="btc-buy"></h2>
                 <h2 id="btc-sell" style="display:none"></h2>
@@ -33,19 +33,6 @@
 
         </div>
     </section>
-
-    
-    <!-- <script>
-        var useramount = document.getElementById('usdamount');
-        useramount.addEventListener('change', btcamount);
-
-        function btcamount() {
-            var amount = 0;
-            amount = document.getElementById('usdamount').value;
-            btcamount = amount / "{{btcprice}}";
-            document.getElementById("btcamount").innerHTML = "You Get: " + btcamount + "BTC"; 
-        }
-    </script> -->
 
 {% endblock %}
 

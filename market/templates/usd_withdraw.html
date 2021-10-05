@@ -1,0 +1,52 @@
+{% extends "base.html" %}
+{% load static %}
+
+
+{% block content %}
+    <!-- USD deposit Dashboard -->
+    <section id="usd_deposit" align="center">
+        <div align="center">
+            <h1>{{user.username}}</h1>
+            <h5>Enter in your bank details</h5>
+            <p> Reference: {{reference}} <br>
+            USD Balance: ${{fiatdetails.balance}} </p>
+        </div>
+
+        <div id="bootstrap-override" class="form-section" align="center">
+            <form id="usd-deposit-form" class="default-form align-items-center" method="POST">
+                {% csrf_token %}
+                <div class="mb-3">  
+                    <label for="bank_name" class="form-label">Bank Name</label>
+                    <input class="form-control" id="bank_name" name="bank_name">
+                </div>
+                <div class="mb-3">  
+                    <label for="account_number" class="form-label">Account Number</label>
+                    <input class="form-control" id="account_number" name="account_number">
+                  </div>
+
+                <div class="mb-3">  
+                  <label for="usdamount_fiat" class="form-label">USD amount</label>
+                  <input class="form-control" id="usdamount_fiat" name="usdamount">
+                </div>
+                <h2 id="usd-deposit"  style="display:none"></h2>
+                <h2 id="usd-withdraw"></h2>
+                <button id="make-transaction" type="submit" value="submit" class="btn btn-primary"><Div>Withdraw</Div></button>
+
+            </form>
+
+            <!-- Display message when user clicks buy -->
+            {% for message in messages %}
+            <h5 style="color: red;">{{ message }}</h5>
+          {% endfor %}
+
+        </div>
+    </section>
+
+
+{% endblock %}
+
+{% block scripts %}
+    <!-- save price variable so you can access it inside the script -->
+    <script>var usdbalance = "{{fiatdetails.balance}}" </script>
+    <script src="{% static 'js/youget.js'%}"></script>
+{% endblock %}
