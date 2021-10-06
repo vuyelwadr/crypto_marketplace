@@ -37,7 +37,7 @@ def fiat(request, id):
 
     requests = User_Requests.objects.prefetch_related().get(id=objectid)
     sum = requests.amount
-    userid = requests.userid 
+    userid = requests.user_id 
     request_type = requests.request
 
     fiatdetails = Fiat_Details.objects.prefetch_related().get(id=userid)
@@ -46,7 +46,7 @@ def fiat(request, id):
             fiatdetail = Fiat_Details(id=userid, balance=(int(fiatdetails.balance)+int(sum)))
             fiatdetail.save()
 
-            fiattransactions = Fiat_Transactions.objects.create(userid=userid, date=str(date.today()), amount=sum, transaction_type='Deposit', notes='User Deposit')
+            fiattransactions = Fiat_Transactions.objects.create(user_id=userid, date=str(date.today()), amount=sum, transaction_type='Deposit', notes='User Deposit')
             requests.status='Completed'
             requests.save()
 
@@ -54,7 +54,7 @@ def fiat(request, id):
             fiatdetail = Fiat_Details(id=userid, balance=(int(fiatdetails.balance)-int(sum)))
             fiatdetail.save()
 
-            fiattransactions = Fiat_Transactions.objects.create(userid=userid, date=str(date.today()), amount=sum, transaction_type='Withdraw', notes='User Withdraw')
+            fiattransactions = Fiat_Transactions.objects.create(user_id=userid, date=str(date.today()), amount=sum, transaction_type='Withdraw', notes='User Withdraw')
             requests.status='Completed'
             requests.save()
             
