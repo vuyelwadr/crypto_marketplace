@@ -175,14 +175,11 @@ def btc_sell(request):
                 tx_1 = userwallet.send([(admindetails.public_key, usdamount, 'usd')], fee=1000, absolute_fee=True)
                 fiat(request, "Sell", usdamount)
                 details = refreshwallet(request)
+                messages.success(request, mark_safe("Transaction Successful, transaction id: " + tx_1 + "<br/>" + "To see your transaction use the following link: <br/> https://blockstream.info/testnet/tx/" + tx_1))
             else:
                 messages.info(request, "Insufficient funds")
         except :
-            messages.info(request,"Transaction Failed")
-        else:
-            messages.success(request, mark_safe("Transaction Successful, transaction id: " + tx_1 + "<br/>" +
-            "To see your transaction use the following link: <br/> https://blockstream.info/testnet/tx/" + tx_1))
-        
+            messages.info(request,"Transaction Failed") 
 
     return render(request, 'btc_sell.html', details)
 
