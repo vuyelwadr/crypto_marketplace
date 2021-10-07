@@ -160,6 +160,8 @@ if USE_S3:
     MEDIA_URL = 'https://s3.us-east-2.amazonaws.com:443/%s/media/' % AWS_STORAGE_BUCKET_NAME
     STATIC_URL = 'https://s3.us-east-2.amazonaws.com:443/%s/static/' % AWS_STORAGE_BUCKET_NAME
 
+    STATIC_ROOT =  os.path.join(BASE_DIR, 'staticfiles')
+
     AWS_S3_FILE_OVERWRITE = False
     AWS_DEFAULT_ACL = None
 
