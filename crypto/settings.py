@@ -141,39 +141,40 @@ AUTH_USER_MODEL = 'market.CustomUser'
 
 # DATE_INPUT_FORMATS = ('%Y-%m-%d')
 # USE_S3 = os.getenv('USE_S3') == 'TRUE'
-USE_S3 = False
+# USE_S3 = False
 
-if USE_S3:
-    # aws settings
-    AWS_ACCESS_KEY_ID = 'AKIAQVQCFX7ZVLSRVUU3'
-    AWS_SECRET_ACCESS_KEY = '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'
-    AWS_STORAGE_BUCKET_NAME = 'crypto-marketplace'
+# if USE_S3:
+#     # aws settings
+#     AWS_ACCESS_KEY_ID = 'AKIAQVQCFX7ZVLSRVUU3'
+#     AWS_SECRET_ACCESS_KEY = '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'
+#     AWS_STORAGE_BUCKET_NAME = 'crypto-marketplace'
 
-    AWS_DEFAULT_ACL = 'public-read'
-    AWS_S3_CUSTOM_DOMAIN = f'{AWS_STORAGE_BUCKET_NAME}.s3.us-east-2.amazonaws.com'
-    AWS_S3_OBJECT_PARAMETERS = {'CacheControl': 'max-age=86400'}
-    # s3 static settings
+#     AWS_DEFAULT_ACL = 'public-read'
+#     AWS_S3_CUSTOM_DOMAIN = f'{AWS_STORAGE_BUCKET_NAME}.s3.us-east-2.amazonaws.com'
+#     AWS_S3_OBJECT_PARAMETERS = {'CacheControl': 'max-age=86400'}
+#     # s3 static settings
 
-    AWS_LOCATION = 'static'
-    # STATIC_URL = f'https://{AWS_S3_CUSTOM_DOMAIN}/{AWS_LOCATION}/'
+#     AWS_LOCATION = 'static'
+#     # STATIC_URL = f'https://{AWS_S3_CUSTOM_DOMAIN}/{AWS_LOCATION}/'
    
-    MEDIA_URL = 'https://s3.us-east-2.amazonaws.com:443/%s/media/' % AWS_STORAGE_BUCKET_NAME
-    STATIC_URL = 'https://s3.us-east-2.amazonaws.com:443/%s/static/' % AWS_STORAGE_BUCKET_NAME
+#     MEDIA_URL = 'https://s3.us-east-2.amazonaws.com:443/%s/media/' % AWS_STORAGE_BUCKET_NAME
+#     STATIC_URL = 'https://s3.us-east-2.amazonaws.com:443/%s/static/' % AWS_STORAGE_BUCKET_NAME
 
-    STATIC_ROOT =  os.path.join(BASE_DIR, 'staticfiles')
+#     STATIC_ROOT =  os.path.join(BASE_DIR, 'staticfiles')
 
-    AWS_S3_FILE_OVERWRITE = False
-    AWS_DEFAULT_ACL = None
+#     AWS_S3_FILE_OVERWRITE = False
+#     AWS_DEFAULT_ACL = None
 
-    DEFAULT_FILE_STORAGE = 'storages.backends.s3boto3.S3Boto3Storage'
-    STATICFILES_STORAGE = 'storages.backends.s3boto3.S3StaticStorage'
+#     DEFAULT_FILE_STORAGE = 'storages.backends.s3boto3.S3Boto3Storage'
+#     STATICFILES_STORAGE = 'storages.backends.s3boto3.S3StaticStorage'
 
 
-else:
-    STATIC_URL = '/static/'
-    STATIC_ROOT = os.path.join(BASE_DIR, 'static')
+# else:
+#     STATIC_URL = '/static/'
+#     STATIC_ROOT = os.path.join(BASE_DIR, 'static')
 
 # STATICFILES_DIRS = (os.path.join(BASE_DIR, 'static'),)
 
 # Activate Django-Heroku.
+
 django_heroku.settings(locals())
