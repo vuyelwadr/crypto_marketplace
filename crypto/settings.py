@@ -140,7 +140,7 @@ AUTH_USER_MODEL = 'market.CustomUser'
 
 # DATE_INPUT_FORMATS = ('%Y-%m-%d')
 # USE_S3 = os.getenv('USE_S3') == 'TRUE'
-USE_S3 = 'TRUE'
+USE_S3 = True
 
 if USE_S3:
     # aws settings
@@ -170,5 +170,5 @@ else:
     STATIC_URL = '/static/'
     STATIC_ROOT = os.path.join(BASE_DIR, 'static')
 
-STATICFILES_DIRS = (os.path.join(BASE_DIR, 'static'),)
+# STATICFILES_DIRS = (os.path.join(BASE_DIR, 'static'),)
 

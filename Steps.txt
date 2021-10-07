@@ -18,3 +18,4 @@ Add coingecko api (https://algotrading101.com/learn/coingecko-api-guide/)
 2/10/2021 Created Deposit page
 5/10/2021 Modified admin page (https://django-tips.avilpage.com/en/latest/admin_custom_admin_actions.html)
 5/10/2021 Finished v1 (vuy,sell,deposit,withdraw)
+6/10/2021 Set Static files to Amazon S3 https://testdriven.io/blog/storing-django-static-and-media-files-on-amazon-s3/
