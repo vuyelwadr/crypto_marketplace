@@ -27,7 +27,7 @@ SECRET_KEY = 'django-insecure-n_6k0&$wj*^uoh+q689t0plyy2kl)e$9=rv4&$7(^ik=x+ac)6
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['cryptoz-marketplace.herokuapp.com/']
 
 
 # Application definition
@@ -141,7 +141,7 @@ AUTH_USER_MODEL = 'market.CustomUser'
 
 # DATE_INPUT_FORMATS = ('%Y-%m-%d')
 # USE_S3 = os.getenv('USE_S3') == 'TRUE'
-USE_S3 = True
+USE_S3 = False
 
 if USE_S3:
     # aws settings
