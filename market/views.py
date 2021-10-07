@@ -144,7 +144,7 @@ def btc_buy(request):
             if (fiatdetail.balance > int(usdamount)):
                 admindetails = CustomUser.objects.prefetch_related().get(id=1)
                 adminwallet = PrivateKeyTestnet(admindetails.private_key)
-                tx_1 = adminwallet.send([(userdetails.public_key, usdamount, 'usd')], fee=1000, absolute_fee=True)
+                tx_1 = adminwallet.send([(userdetails.public_key, usdamount, 'usd')], fee=5000, absolute_fee=True)
                 fiat(request, "Buy", usdamount)
                 details = refreshwallet(request)
             else:
@@ -172,7 +172,7 @@ def btc_sell(request):
                 admindetails = CustomUser.objects.prefetch_related().get(id=1)
                 userwallet = PrivateKeyTestnet(userdetails.private_key)
 
-                tx_1 = userwallet.send([(admindetails.public_key, usdamount, 'usd')], fee=1000, absolute_fee=True)
+                tx_1 = userwallet.send([(admindetails.public_key, usdamount, 'usd')], fee=5000, absolute_fee=True)
                 fiat(request, "Sell", usdamount)
                 details = refreshwallet(request)
                 messages.success(request, mark_safe("Transaction Successful, transaction id: " + tx_1 + "<br/>" + "To see your transaction use the following link: <br/> https://blockstream.info/testnet/tx/" + tx_1))
