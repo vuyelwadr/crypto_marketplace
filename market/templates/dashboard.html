@@ -20,7 +20,7 @@
     </div>
 
     <div id="bootstrap-override" class="float-end col-sm-6">
-      USD Balance: ${{fiatdetails.balance}} <br>
+      USD Balance: ${{fiatdetails.balance}} <br><br>
       <a href="{% url 'usd_deposit' %}"><button type="submit" value="deposit" class="btn btn-primary">Deposit</button></a>
       <a href="{% url 'usd_withdraw' %}"><button type="submit" value="withdraw" class="btn btn-primary">Withdraw</button></a>
       <!-- <button type="submit" value="history" class="btn btn-primary">History</button> -->
@@ -28,9 +28,8 @@
   </section>
 
     <!-- review form -->
-  <section id ="review-form">
-
-    <div id="bootstrap-override" class="form-section" align="center">
+  <section id ="review-form" style="height: 100px">
+    <div id="bootstrap-override" class="form-section  justify-content-center" align="center">
       <form id="reviewForm" class="default-form align-items-center" method="POST">
         {% csrf_token %}
         <h1>Write a review</h1> <br>
@@ -40,14 +39,13 @@
         </div>
         <div class="mb-3">
           <label for="review" class="form-label">Review</label><br>
-          <textarea id="review" name="review" rows="3" cols="80"></textarea>
+          <textarea id="review" name="review" rows="3" cols="40"></textarea>
           
         </div>
         <button type="submit" value="review" class="btn btn-primary">Submit</button>
         
       </form>
     </div>
-    
   </section>
 
 
