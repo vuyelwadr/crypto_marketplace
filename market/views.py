@@ -11,6 +11,7 @@ import string
 import secrets
 from django.utils.safestring import mark_safe
 import requests
+from django.utils.datastructures import MultiValueDictKeyError
 
 
 def index(request):
@@ -89,12 +90,12 @@ def register(request):
                     btcdetail = Btc_Details(user.id, public_key=public_key, private_key=private_key, balance_btc=balance_btc, balance_usd=balance_usd, transactions=transactions  )
                     btcdetail.save()
 
-                    # Link user details to Fiat_Details Table and Give the user 1000USD to start with
-                    fiatdetail = Fiat_Details(user.id, balance=1000) 
+                    # Link user details to Fiat_Details Table and Give the user 100USD to start with
+                    fiatdetail = Fiat_Details(user.id, balance=100) 
                     fiatdetail.save()
 
-                    # Record 1000USD deposit into user's account
-                    fiattransactions = Fiat_Transactions(user.id, date=str(date.today()), amount=1000, transaction_type='Deposit', notes='Initial Deposit')
+                    # Record 100USD deposit into user's account
+                    fiattransactions = Fiat_Transactions(user.id, date=str(date.today()), amount=100, transaction_type='Deposit', notes='Initial Deposit')
                     fiattransactions.save()
 
                     print('User Created')
@@ -192,15 +193,19 @@ def usd_deposit(request):
     details['reference'] = reference
 
     if request.method == 'POST':
-        usdamount = request.POST['usdamount']
-        proof = request.FILES['proof']
-
+        usdamount = request.POST['usdamount']   
         try:
-            user_request(request, "Deposit", usdamount, reference, proof, "", "")
+            if int(usdamount) > 0 :
+                proof = request.FILES['proof']
+                user_request(request, "Deposit", usdamount, reference, proof, "", "")
+                messages.success(request,"Transaction Successful")
+            else:
+                messages.info(request,"Enter a valid amount")
+        except MultiValueDictKeyError:
+            messages.info(request,"Upload Proof")
         except:
             messages.info(request,"Transaction Failed")
-        else:
-            messages.success(request,"Transaction Successful")
+            
 
             
 

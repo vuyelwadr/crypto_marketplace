@@ -1,0 +1,12 @@
+<html>
+  <body>
+    <?php
+  $name = 'Andreas'; //$name assigned Andreas
+  $surname = $name; //$surname assigned Andreas
+  $midname = &$name; // Reference $name via $midname.
+  $midname = "My name is $midname"; // Alter $midname...
+  echo $name ."<br>";
+  echo $midname; // $name is altered too.
+  ?>
+  </body>
+</html>
