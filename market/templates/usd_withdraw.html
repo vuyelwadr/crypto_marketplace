@@ -13,7 +13,7 @@
         </div>
 
         <div id="bootstrap-override" class="form-section" align="center">
-            <form id="usd-deposit-form" class="default-form align-items-center" method="POST">
+            <form id="usd-deposit-form" class="default-form align-items-center" method="POST" enctype="multipart/form-data">
                 {% csrf_token %}
                 <div class="mb-3">  
                     <label for="bank_name" class="form-label">Bank Name</label>
@@ -22,11 +22,14 @@
                 <div class="mb-3">  
                     <label for="account_number" class="form-label">Account Number</label>
                     <input class="form-control" id="account_number" name="account_number">
-                  </div>
-
+                </div>
                 <div class="mb-3">  
                   <label for="usdamount_fiat" class="form-label">USD amount</label>
                   <input class="form-control" id="usdamount_fiat" name="usdamount">
+                </div>
+                <div class="mb-3">
+                    <label for="proof">Upload proof</label>
+                    <input type="file" id="proof" name="proof" accept="image/*"> 
                 </div>
                 <h2 id="usd-deposit"  style="display:none"></h2>
                 <h2 id="usd-withdraw"></h2>

@@ -205,10 +205,7 @@ def usd_deposit(request):
             messages.info(request,"Upload Proof")
         except:
             messages.info(request,"Transaction Failed")
-            
-
-            
-
+       
     return render(request, 'usd_deposit.html',details)
 
 def usd_withdraw(request):
@@ -223,17 +220,19 @@ def usd_withdraw(request):
         usdamount = request.POST['usdamount']
         bank_name = request.POST['bank_name']
         account_number = request.POST['account_number']
+        
 
         try:
+            proof = request.FILES['proof']
             if (int(usdamount)<=int(fiatdetails.balance) and len(bank_name)>0 and len(account_number)>0) :
-                user_request(request, "Withdraw", usdamount, reference, "", bank_name, account_number )
+                user_request(request, "Withdraw", usdamount, reference, proof, bank_name, account_number )
                 messages.success(request,"Transaction Successful")
             else:
                 messages.info(request,"Transaction Failed")
+        except MultiValueDictKeyError:
+            messages.info(request,"Upload Proof")
         except:
             messages.info(request,"Transaction Failed")
-
-            
 
     return render(request, 'usd_withdraw.html',details)
 
@@ -301,7 +300,5 @@ def user_request(request, t_type, amount, reference, proof, bank, account):
     userid = request.user.id;
  
         # if user enters a non integer value throw a transaction
-    if (t_type == "Deposit"):
+    if (t_type == "Deposit" or t_type == "Withdraw"):
         userrequest = User_Requests.objects.create(user_id=userid, amount=amount, request=t_type, reference=reference, proof=proof, date=str(date.today()), status="Pending")
-    elif (t_type == "Withdraw"):
-        userrequest = User_Requests.objects.create(user_id=userid, amount=amount, request=t_type, reference=reference, date=str(date.today()), status="Pending")
