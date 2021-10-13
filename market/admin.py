@@ -51,6 +51,9 @@ def fiat(request, id):
             requests.save()
 
     elif (request_type == "Withdraw"):
+        if (sum > fiatdetails.balance):
+            messages.error(request,"User has insufficient funds")
+        else:
             fiatdetail = Fiat_Details(id=userid, balance=(int(fiatdetails.balance)-int(sum)))
             fiatdetail.save()
 

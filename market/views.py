@@ -225,14 +225,15 @@ def usd_withdraw(request):
         account_number = request.POST['account_number']
 
         try:
-            if (int(usdamount)<int(fiatdetails.balance) and len(bank_name)>0 and len(account_number)>0) :
+            if (int(usdamount)<=int(fiatdetails.balance) and len(bank_name)>0 and len(account_number)>0) :
                 user_request(request, "Withdraw", usdamount, reference, "", bank_name, account_number )
+                messages.success(request,"Transaction Successful")
             else:
                 messages.info(request,"Transaction Failed")
         except:
             messages.info(request,"Transaction Failed")
-        else:
-            messages.success(request,"Transaction Successful")
+
+            
 
     return render(request, 'usd_withdraw.html',details)
 
