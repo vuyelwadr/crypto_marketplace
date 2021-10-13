@@ -64,7 +64,7 @@ def fiat(request, id):
 
 
 class Review(admin.ModelAdmin):
-    list_display = ("user_id", "review_title", "sentiment_score", "sentiment", "creation_date")
+    list_display = ("id", "user_id", "review_title", "sentiment_score", "sentiment", "creation_date")
     list_filter = ("user_id", "sentiment")
     search_fields = ["user_id", "sentiment" "review_title", "creation_date"]
 
