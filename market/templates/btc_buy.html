@@ -23,13 +23,22 @@
                 <h2 id="btc-buy"></h2>
                 <h2 id="btc-sell" style="display:none"></h2>
                 <button id="make-transaction" type="submit" value="submit" class="btn btn-primary">Buy</button>
-
             </form>
 
             <!-- Display message when user clicks buy -->
             {% for message in messages %}
             <h5 style="color: red;">{{ message }}</h5>
-          {% endfor %}
+            {% endfor %}
+            <p><br> Click the button below for help</p>
+            <p><button id="gethelp" class="btn btn-primary">Help</button></p>
+            <div id="help" style="display:none">
+                <p><b>Btcoin Price:</b> The current price of bitcoin</p>
+                <p><b>Btcoin Balance:</b> Your current bitcoin balance</p>
+                <p><b>USD Balance:</b> Your current USD Balance</p>
+                <p><b>USD Amount:</b> The amount of bitcoin you want in USD</p> 
+            </div>
+
+
 
         </div>
     </section>

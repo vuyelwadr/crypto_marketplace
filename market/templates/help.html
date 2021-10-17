@@ -1,0 +1,49 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block content %}
+  <!-- Home page for unauthenticated users -->
+  <section id="home-page">
+
+    <section class="text-center">
+        <div">
+          <h2>User Help</h2>
+          <p>This page contains information the user may find useful</p>
+        </div>  <br>
+
+      <div>
+          <h2>How to use the site</h2>
+            <p>CryptoZ allows Zimbabweans to buy, sell and withdraw their cryptocurrency assets</p>
+            <p>The site is in <b>development</b>, only <b>virtual money</b> and BTC with <b>no monetary value</b> can be used</p>
+      </div>
+    </section>
+    
+    <!-- https://bootstrapious.com/p/bootstrap-navbar-with-logo-->
+    <section class="py-5">
+        <div class="container py-5">
+            <ol class="pl-3">
+                <li class="mb-3">
+                  <img src="{% static 'img/btc_buy.png' %}" alt="Crypto Z loggo" style="height: 300px;">
+                  <p><b>Btcoin Price:</b> The current price of bitcoin</p>
+                  <p><b>Btcoin Balance:</b> Your current bitcoin balance</p>
+                  <b>Btcoin Price:</b> The current price of bitcoin
+                  <b>Btcoin Price:</b> The current price of bitcoin
+                </li>
+                <li class="mb-3">Deposit money or transfer some crypto into your wallet</li>
+                <li class="mb-3">Join the revolution</li>
+            </ol>
+            <p class="text-muted mt-5">Live with no <u>restrictions</u></p>
+        </div>
+    </section>
+    <div id="large-header" class="large-header" style="height: 282px;">
+      <canvas id="demo-canvas" width="1366" height="282">
+      </canvas>
+    </div>
+
+  </section>
+
+{% endblock %}
+
+{% block scripts %}
+    <script src="{% static 'js/background_effect.js'%}"></script>
+{% endblock %}

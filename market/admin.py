@@ -1,8 +1,9 @@
 from django.contrib import admin
-from .models import User_Requests, Reviews
+
+# from .models import User_Requests, Reviews
 from django.http import HttpResponse
 from django.contrib import messages
-from .models import CustomUser, Btc_Details, Fiat_Details, Fiat_Transactions, User_Requests
+from .models import CustomUser, Btc_Details, Fiat_Details, Fiat_Transactions, User_Requests, Reviews
 from datetime import date
 
 # Register your models here.
