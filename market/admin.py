@@ -8,11 +8,11 @@ from datetime import date
 
 # Register your models here.
 class Requests(admin.ModelAdmin):
-    change_form_template = "user_requests.html"
+    change_form_template = "admin_user_requests.html"
 
     list_display = ("user_id", "reference", "amount", "request", "status")
     list_filter = ("status",)
-    search_fields = ["user_id", "reference", "amount", "bank_name"]
+    search_fields = ["reference", "amount", "bank_name"]
 
     class Meta:
         model = User_Requests
@@ -67,7 +67,7 @@ def fiat(request, id):
 class Review(admin.ModelAdmin):
     list_display = ("id", "user_id", "review_title", "sentiment_score", "sentiment", "creation_date")
     list_filter = ("user_id", "sentiment")
-    search_fields = ["user_id", "sentiment" "review_title", "creation_date"]
+    search_fields = ["sentiment", "review_title", "creation_date"]
 
     class Meta:
         model = Reviews

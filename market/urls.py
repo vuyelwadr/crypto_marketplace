@@ -12,5 +12,6 @@ urlpatterns = [
     path('btc_sell', views.btc_sell, name='btc_sell'),
     path('usd_deposit', views.usd_deposit, name='usd_deposit'),
     path('usd_withdraw', views.usd_withdraw, name='usd_withdraw'),
-    path('help', views.help, name='help')
+    path('help', views.help, name='help'),
+    path('user_requests', views.user_requests, name='user_requests'),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

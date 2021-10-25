@@ -23,3 +23,9 @@ function usd_calculator(){
     document.getElementById("usd-deposit").innerHTML = "Ballance will be: $" + (parseInt(usdbalance) + parseInt(amount));
     document.getElementById("usd-withdraw").innerHTML = "Ballance will be: $" + (parseInt(usdbalance) - parseInt(amount));
 }
+
+//help section
+var help = document.getElementById('gethelp').addEventListener("click", showhelp);
+function showhelp(){
+    document.getElementById('help').style.display="contents"
+}

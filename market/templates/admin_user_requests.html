@@ -1,0 +1,18 @@
+{% extends 'admin/change_form.html' %}
+
+{% if messages %}
+<ul class="messages">
+    {% for message in messages %}
+    <li{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
+    {% endfor %}
+</ul>
+{% endif %}
+
+{% block submit_buttons_bottom %}
+<div class="submit-row">
+    <input type="submit" value="Approve" name="Approve">
+    <input type="submit" value="Deny" name="Deny">
+</div>
+    {{ block.super }}
+    
+{% endblock %}

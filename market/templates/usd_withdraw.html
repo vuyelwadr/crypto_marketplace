@@ -40,7 +40,17 @@
             <!-- Display message when user clicks buy -->
             {% for message in messages %}
             <h5 style="color: red;">{{ message }}</h5>
-          {% endfor %}
+            {% endfor %}
+
+            <!-- Help section -->
+            <p><br> Click the button below for help</p>
+            <p><button id="gethelp" class="btn btn-primary">Help</button></p>
+            <div id="help" style="display:none">
+                <p><b>Bank Name:</b> The bank you want us to send your money to</p>
+                <p><b>Account Number:</b> Your account number at the specified bank</p>
+                <p><b>USD Amount:</b> The USD amount you want us to transfer into your bank account</p> 
+                <p><b>Proof:</b> Please upload an image of yourself with your id and reference in the frame for <b>Security</b></p> 
+            </div>
 
         </div>
     </section>
@@ -51,5 +61,5 @@
 {% block scripts %}
     <!-- save price variable so you can access it inside the script -->
     <script>var usdbalance = "{{fiatdetails.balance}}" </script>
-    <script src="{% static 'js/youget.js'%}"></script>
+    <script src="{% static 'js/general.js'%}"></script>
 {% endblock %}

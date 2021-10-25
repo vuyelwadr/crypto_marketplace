@@ -19,16 +19,21 @@
                 <div class="mb-3">
                   <label for="USD-amount" class="form-label">USD amount</label>
                   <input class="form-control" id="usdamount_crypto" name="usdamount">
+                  <input type="hidden" name="transaction_priority" value="0">
+                  <input type="checkbox" name="transaction_priority" value="1">  Fast-Transaction
                 </div>
+                 <!-- Display message when user clicks buy -->
                 <h2 id="btc-buy"></h2>
-                <h2 id="btc-sell" style="display:none"></h2>
+                <h2 id="btc-sell" style="display:none;"></h2>
                 <button id="make-transaction" type="submit" value="submit" class="btn btn-primary">Buy</button>
             </form>
 
-            <!-- Display message when user clicks buy -->
+           
             {% for message in messages %}
             <h5 style="color: red;">{{ message }}</h5>
             {% endfor %}
+
+            <!-- Help section -->
             <p><br> Click the button below for help</p>
             <p><button id="gethelp" class="btn btn-primary">Help</button></p>
             <div id="help" style="display:none">
@@ -36,6 +41,7 @@
                 <p><b>Btcoin Balance:</b> Your current bitcoin balance</p>
                 <p><b>USD Balance:</b> Your current USD Balance</p>
                 <p><b>USD Amount:</b> The amount of bitcoin you want in USD</p> 
+                <p><b>Fast Transaction:</b> pay a higher fee to make the transaction faster</p> 
             </div>
 
 
@@ -48,5 +54,5 @@
 {% block scripts %}
     <!-- save price variable so you can access it inside the script -->
     <script>var btcprice = "{{btcprice}}" </script>
-    <script src="{% static 'js/youget.js'%}"></script>
+    <script src="{% static 'js/general.js'%}"></script>
 {% endblock %}

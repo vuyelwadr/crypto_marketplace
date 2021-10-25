@@ -1,18 +1,60 @@
-{% extends 'admin/change_form.html' %}
+{% extends "base.html" %}
+{% load static %}
 
-{% if messages %}
-<ul class="messages">
-    {% for message in messages %}
-    <li{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
-    {% endfor %}
-</ul>
-{% endif %}
 
-{% block submit_buttons_bottom %}
-<div class="submit-row">
-    <input type="submit" value="Approve" name="Approve">
-    <input type="submit" value="Deny" name="Deny">
-</div>
-    {{ block.super }}
-    
+{% block content %}
+    <section id="details">
+
+        <div id="requests" class="container">
+            <h2>{{ user.username }} Requests</h2>
+            <p>The table shows your deposit and withdrawal requests</p>            
+            <table id="user_requests" class="table table-bordered">
+                <thead>
+                    <tr>
+                    <th>Request Type</th>
+                    <th>Amount</th>
+                    <th>Reference</th>
+                    <th>Date</th>
+                    <th>Status</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for userrequest in userrequests %}
+                    <tr>
+                    <td>{{ userrequest.request }}</td>
+                    <td>{{ userrequest.amount }}</td>
+                    <td>{{ userrequest.reference }}</td>
+                    <td>{{ userrequest.date }}</td>
+                    <td>{{ userrequest.status }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+
+        <div id="fiat_transactions" class="container">
+            <h2>{{ user.username }} Fiat transactions</h2>
+            <p>The table shows your fiat transactions</p>            
+            <table id="user_requests" class="table table-bordered">
+                <thead>
+                    <tr>
+                    <th>Transaction Type</th>
+                    <th>Amount</th>
+                    <th>Date</th>
+                    <th>Note</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for transactions in transactiondetails %}
+                    <tr>
+                    <td>{{ transactions.transaction_type }}</td>
+                    <td>{{ transactions.amount }}</td>
+                    <td>{{ transactions.date }}</td>
+                    <td>{{ transactions.notes }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </section>  
 {% endblock %}

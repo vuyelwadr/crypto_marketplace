@@ -138,24 +138,26 @@ def btc_buy(request):
     userdetails = details.get("userdetails")
     if request.method == 'POST':
         usdamount = request.POST['usdamount']  
+        transaction_priority = request.POST['transaction_priority']
         # Admin account has id 1
 
         try:
-
             if (fiatdetail.balance > int(usdamount)):
                 admindetails = CustomUser.objects.prefetch_related().get(id=1)
                 adminwallet = PrivateKeyTestnet(admindetails.private_key)
-                tx_1 = adminwallet.send([(userdetails.public_key, usdamount, 'usd')], fee=5000, absolute_fee=True)
-                fiat(request, "Buy", usdamount)
+                if (transaction_priority=="1"):
+                    tx_1 = adminwallet.send([(userdetails.public_key, usdamount, 'usd')])
+                    messages.info(request, "Fast")
+                else:
+                    tx_1 = adminwallet.send([(userdetails.public_key, usdamount, 'usd')], fee=5000, absolute_fee=True)
+                    messages.info(request, "Normal")
+                fiat(request, "Buy", usdamount, tx_1)
                 details = refreshwallet(request)
                 messages.success(request, mark_safe("Transaction Successful, transaction id: " + tx_1 + "<br/>" + "To see your transaction use the following link: <br/> https://blockstream.info/testnet/tx/" + tx_1))
             else:
                 messages.info(request, "Insufficient funds")
         except:
             messages.info(request,"Transaction Failed")
-
-           
-
 
     return render(request, 'btc_buy.html', details)
 
@@ -173,7 +175,7 @@ def btc_sell(request):
                 userwallet = PrivateKeyTestnet(userdetails.private_key)
 
                 tx_1 = userwallet.send([(admindetails.public_key, usdamount, 'usd')], fee=5000, absolute_fee=True)
-                fiat(request, "Sell", usdamount)
+                fiat(request, "Sell", usdamount, tx_1)
                 details = refreshwallet(request)
                 messages.success(request, mark_safe("Transaction Successful, transaction id: " + tx_1 + "<br/>" + "To see your transaction use the following link: <br/> https://blockstream.info/testnet/tx/" + tx_1))
             else:
@@ -238,6 +240,19 @@ def usd_withdraw(request):
 def help(request):
     return render(request,'help.html')
 
+def user_requests(request):
+    # details = refreshwallet(request)
+    userid = request.user.id
+    # Use objects.filter because it allows for iteration through the object
+    # Only need fiat and requests for now
+    userdetails = CustomUser.objects.filter(id=userid)
+    btcdetails = Btc_Details.objects.filter(id=userid)
+    fiatdetails = Fiat_Details.objects.filter(id=userid)
+    transactiondetails = Fiat_Transactions.objects.filter(user_id=userid)
+    userrequests = User_Requests.objects.filter(user_id=userid)
+    details = {'userdetails' : userdetails, 'btcdetails' : btcdetails, 'fiatdetails' : fiatdetails, 'transactiondetails' : transactiondetails, 'userrequests' : userrequests}
+    return render(request, 'user_requests.html' ,details)
+
 def refreshwallet(request):
     
     # load all tables and create objects accessible in the html  file
@@ -268,16 +283,16 @@ def refreshwallet(request):
     btcdetails = Btc_Details.objects.prefetch_related().get(id=userid)
     fiatdetails = Fiat_Details.objects.prefetch_related().get(id=userid)
     transactiondetails = Fiat_Transactions.objects.prefetch_related().get(id=userid)
-
+    userrequests = User_Requests.objects.filter(user_id=userid)
 
     # Shows that the values were refreshed, can delete this after dev
     # messages.info(request, "Text Area")
-    details = {'userdetails' : userdetails, 'btcdetails' : btcdetails, 'fiatdetails' : fiatdetails, 'transactiondetails' : transactiondetails, 'btcprice' : btcprice}
+    details = {'userdetails' : userdetails, 'btcdetails' : btcdetails, 'fiatdetails' : fiatdetails, 'transactiondetails' : transactiondetails, 'btcprice' : btcprice, 'userrequests' : userrequests}
 
     return details
 
 
-def fiat(request,transaction, sum):
+def fiat(request,transaction, sum, reference):
     details = refreshwallet(request)
     userid = request.user.id;
     fiatdetails = details.get("fiatdetails")
@@ -287,13 +302,13 @@ def fiat(request,transaction, sum):
         fiatdetail = Fiat_Details(userid, balance=(int(fiatdetails.balance)-int(sum))) 
         fiatdetail.save()
 
-        fiattransactions = Fiat_Transactions.objects.create(user_id=userid, date=str(date.today()), amount=sum, transaction_type='Buy', notes='BTC Buy')
+        fiattransactions = Fiat_Transactions.objects.create(user_id=userid, date=str(date.today()), amount=sum, transaction_type='Buy', notes='BTC Buy ID: '+reference)
     
     elif (transaction == "Sell"):
         fiatdetail = Fiat_Details(userid, balance=(int(fiatdetails.balance)+int(sum))) 
         fiatdetail.save()
 
-        fiattransactions = Fiat_Transactions.objects.create(user_id=userid, date=str(date.today()), amount=sum, transaction_type='Sell', notes='BTC Sell')
+        fiattransactions = Fiat_Transactions.objects.create(user_id=userid, date=str(date.today()), amount=sum, transaction_type='Sell', notes='BTC Sell ID: '+reference)
 
 
 
