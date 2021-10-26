@@ -262,6 +262,7 @@ def help(request):
     return render(request,'help.html')
 
 def user_requests(request):
+    refreshwallet(request)
     # details = refreshwallet(request)
     userid = request.user.id
     # Use objects.filter because it allows for iteration through the object
