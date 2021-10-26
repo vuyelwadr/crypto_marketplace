@@ -12,6 +12,7 @@ import secrets
 from django.utils.safestring import mark_safe
 import requests
 from django.utils.datastructures import MultiValueDictKeyError
+from django.db.models import Sum, Count
 
 
 def index(request):
@@ -49,8 +50,28 @@ def index(request):
             messages.success(request, "Review Submitted")
         
         return render(request, 'dashboard.html', details)
+    else:
+        sentiments = Reviews.objects.all()
+        sentiment = sentiments.aggregate(Sum('sentiment_score')).get("sentiment_score__sum")
+        str_sentiment = "Site Sentiment score: " + str(sentiment)
+        if (sentiment < 0):
+            str_sentiment += " Negative"
+        elif (sentiment == 0):
+            str_sentiment += " Neutral"
+        elif (sentiment > 0):
+            str_sentiment += " Positive"
 
-    return render(request, 'index.html')
+        transactions = Fiat_Transactions.objects.all()
+        # btc_buy = sentiments.aggregate(Count('transaction_type'))
+        btc_transactions = transactions.values('transaction_type').annotate(dcount=Count('transaction_type'))
+        # transactions.values('Buy').annotate(dcount=Count('transaction_type'))
+        btc_transactions_buy = btc_transactions.get(transaction_type="Buy").get("dcount")
+        btc_transactions_sell = btc_transactions.get(transaction_type="Sell").get("dcount")
+        total_transactions = btc_transactions_buy + btc_transactions_sell
+
+        messages.info(request, str_sentiment)
+        messages.info(request, "Total Transactions: "+ str(total_transactions))
+        return render(request, 'index.html')
 
 def register(request):
     # Generate bitcoin key

@@ -16,6 +16,12 @@
               <b>And get a Bitcoin wallet for free</b>
           </h4>
       </div>
+
+      <div>
+        {% for message in messages %}
+            <h5>{{ message }}</h5>
+        {% endfor %}
+      </div>
     </section>
     
     <!-- https://bootstrapious.com/p/bootstrap-navbar-with-logo-->
