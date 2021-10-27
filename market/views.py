@@ -269,13 +269,6 @@ def usd_withdraw(request):
         return index(request)
     
 
-def help(request):
-    return render(request,'help.html')
-
-def review(request):
-    return render(request,'review.html')
-
-
 def user_requests(request):
     if request.user.is_authenticated:
         refreshwallet(request)
@@ -291,6 +284,19 @@ def user_requests(request):
         details = {'userdetails' : userdetails, 'btcdetails' : btcdetails, 'fiatdetails' : fiatdetails, 'transactiondetails' : transactiondetails, 'userrequests' : userrequests}
         return render(request, 'user_requests.html' ,details)
     return index(request)
+
+def help(request):
+    return render(request,'help.html')
+
+def review(request):
+    return render(request,'review.html')
+
+def user_details(request):
+    if request.user.is_authenticated:
+        
+        return render(request, 'user_details.html')
+    else:
+        return index(request)
 
 def refreshwallet(request):
     
