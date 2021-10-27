@@ -7,9 +7,9 @@
     <section id="btc_buy" align="center">
         <div align="center">
             <h1>{{user.username}}</h1>
-            Bitcoin Price: ${{btcprice}} <br>
-            Bitcoin Balance: {{btcdetails.balance_btc}}BTC <br>
-            USD Balance: ${{fiatdetails.balance}} <br>
+            Current price of Bitcoin: <b>${{btcprice}}</b> <br>
+            Current Bitcoin balance: <b>{{btcdetails.balance_btc}}BTC</b> <br>
+            Current USD balance: <b>${{fiatdetails.balance}}</b> <br>
         </div>
 
         <div id="bootstrap-override" class="form-section" align="center">
@@ -17,10 +17,10 @@
                 {% csrf_token %}
 
                 <div class="mb-3">
-                  <label for="USD-amount" class="form-label">USD amount</label>
+                  <label for="USD-amount" class="form-label">Amount of bitcoin you want in USD</label>
                   <input class="form-control" id="usdamount_crypto" name="usdamount">
                   <input type="hidden" name="transaction_priority" value="0">
-                  <input type="checkbox" name="transaction_priority" value="1">  Fast-Transaction
+                  <input type="checkbox" name="transaction_priority" value="1">  Fast-Transaction <br> pay a higher fee to make the transaction faster
                 </div>
                  <!-- Display message when user clicks buy -->
                 <h2 id="btc-buy"></h2>
@@ -32,17 +32,6 @@
             {% for message in messages %}
             <h5 style="color: red;">{{ message }}</h5>
             {% endfor %}
-
-            <!-- Help section -->
-            <p><br> Click the button below for help</p>
-            <p><button id="gethelp" class="btn btn-primary">Help</button></p>
-            <div id="help" style="display:none">
-                <p><b>Btcoin Price:</b> The current price of bitcoin</p>
-                <p><b>Btcoin Balance:</b> Your current bitcoin balance</p>
-                <p><b>USD Balance:</b> Your current USD Balance</p>
-                <p><b>USD Amount:</b> The amount of bitcoin you want in USD</p> 
-                <p><b>Fast Transaction:</b> pay a higher fee to make the transaction faster</p> 
-            </div>
 
 
 

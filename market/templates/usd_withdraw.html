@@ -16,7 +16,7 @@
             <form id="usd-deposit-form" class="default-form align-items-center" method="POST" enctype="multipart/form-data">
                 {% csrf_token %}
                 <div class="mb-3">  
-                    <label for="bank_name" class="form-label">Bank Name</label>
+                    <label for="bank_name" class="form-label">The bank you want us to send your money to</label>
                     <input class="form-control" id="bank_name" name="bank_name">
                 </div>
                 <div class="mb-3">  
@@ -24,12 +24,12 @@
                     <input class="form-control" id="account_number" name="account_number">
                 </div>
                 <div class="mb-3">  
-                  <label for="usdamount_fiat" class="form-label">USD amount</label>
+                  <label for="usdamount_fiat" class="form-label">USD amount to transfer into your bank account</label>
                   <input class="form-control" id="usdamount_fiat" name="usdamount">
                 </div>
                 <div class="mb-3">
-                    <label for="proof">Upload proof</label>
-                    <input type="file" id="proof" name="proof" accept="image/*"> 
+                    <label for="proof">Upload an <b>image</b> of yourself with your <b>passport/id</b> and <b>reference</b> in the frame for <b>Security</b></label>
+                    <input class="form-control" type="file" id="proof" name="proof" accept="image/*"> 
                 </div>
                 <h2 id="usd-deposit"  style="display:none"></h2>
                 <h2 id="usd-withdraw"></h2>
@@ -43,14 +43,13 @@
             {% endfor %}
 
             <!-- Help section -->
-            <p><br> Click the button below for help</p>
+            <!-- <p><br> Click the button below for help</p>
             <p><button id="gethelp" class="btn btn-primary">Help</button></p>
             <div id="help" style="display:none">
-                <p><b>Bank Name:</b> The bank you want us to send your money to</p>
                 <p><b>Account Number:</b> Your account number at the specified bank</p>
                 <p><b>USD Amount:</b> The USD amount you want us to transfer into your bank account</p> 
                 <p><b>Proof:</b> Please upload an image of yourself with your passport/id and reference in the frame for <b>Security</b></p> 
-            </div>
+            </div> -->
 
         </div>
     </section>

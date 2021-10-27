@@ -8,10 +8,10 @@
         <div align="center">
             <h1>{{user.username}}</h1>
             <h5>Deposit into the following account using the reference displayed</h5>
-            Bank Name: Nedbank <br>
-            Account Number: 0 <br>
-            Reference: {{reference}} <br>
-            USD Balance: ${{fiatdetails.balance}} <br>
+            Bank Name: <b>Nedbank</b> <br>
+            Account Number: <b>0</b> <br>
+            Reference: <b>{{reference}}</b> <br>
+            USD Balance: <b>${{fiatdetails.balance}}</b> <br>
         </div>
 
         <div id="bootstrap-override" class="form-section" align="center">
@@ -19,12 +19,12 @@
                 {% csrf_token %}
 
                 <div class="mb-3">  
-                  <label for="USD-amount" class="form-label">USD amount</label>
+                  <label for="USD-amount" class="form-label">USD amount to deposit</label>
                   <input class="form-control" id="usdamount_fiat" name="usdamount">
                 </div>
                 <div class="mb-3">
-                    <label for="proof">Upload proof</label>
-                    <input type="file" id="proof" name="proof" accept="image/*"> 
+                    <label for="proof">Upload proof of payment with the reference clearly displayed</label>
+                    <input class="form-control" type="file" id="proof" name="proof" accept="image/*"> 
                 </div>
                 <h2 id="usd-deposit"></h2>
                 <h2 id="usd-withdraw" style="display:none"></h2>
@@ -37,12 +37,7 @@
             <h5 style="color: red;">{{ message }}</h5>
             {% endfor %}
 
-            <!-- Help section -->
-            <p><br> Click the button below for help</p>
-            <p><button id="gethelp" class="btn btn-primary">Help</button></p>
-            <div id="help" style="display:none">
-                <p><b>Upload</b> Your proof of payment to the specified account with the <b>reference</b> clearly displayed </p>
-            </div>
+    
 
         </div>
     </section>

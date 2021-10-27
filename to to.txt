@@ -46,3 +46,15 @@ notes = reference
 
 
 * later allow user to view status of their transactions
+
+
+fix help sections add text to labels
+add login to index page
+remove username from pages except Dashboard
+move review to page
+add sucessful account creation
+fix negative user input
+fix overdraft input resulting in negative number
+
+
+

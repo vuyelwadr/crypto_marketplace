@@ -25,7 +25,7 @@ function usd_calculator(){
 }
 
 //help section
-var help = document.getElementById('gethelp').addEventListener("click", showhelp);
-function showhelp(){
-    document.getElementById('help').style.display="contents"
-}
+// var help = document.getElementById('gethelp').addEventListener("click", showhelp);
+// function showhelp(){
+//     document.getElementById('help').style.display="contents"
+// }
