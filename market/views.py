@@ -153,127 +153,142 @@ def logout(request):
 
 
 def btc_buy(request):
+    if request.user.is_authenticated:
+        details = refreshwallet(request)
+        fiatdetail = details.get("fiatdetails")
+        userdetails = details.get("userdetails")
+        if request.method == 'POST':
+            usdamount = request.POST['usdamount']  
+            transaction_priority = request.POST['transaction_priority']
+            # Admin account has id 1
 
-    details = refreshwallet(request)
-    fiatdetail = details.get("fiatdetails")
-    userdetails = details.get("userdetails")
-    if request.method == 'POST':
-        usdamount = request.POST['usdamount']  
-        transaction_priority = request.POST['transaction_priority']
-        # Admin account has id 1
-
-        try:
-            if (fiatdetail.balance > int(usdamount)):
-                admindetails = CustomUser.objects.prefetch_related().get(id=1)
-                adminwallet = PrivateKeyTestnet(admindetails.private_key)
-                if (transaction_priority=="1"):
-                    tx_1 = adminwallet.send([(userdetails.public_key, usdamount, 'usd')])
-                    messages.info(request, "Fast")
+            try:
+                if (fiatdetail.balance > int(usdamount)):
+                    admindetails = CustomUser.objects.prefetch_related().get(id=1)
+                    adminwallet = PrivateKeyTestnet(admindetails.private_key)
+                    if (transaction_priority=="1"):
+                        tx_1 = adminwallet.send([(userdetails.public_key, usdamount, 'usd')])
+                        messages.info(request, "Fast")
+                    else:
+                        tx_1 = adminwallet.send([(userdetails.public_key, usdamount, 'usd')], fee=5000, absolute_fee=True)
+                        messages.info(request, "Normal")
+                    fiat(request, "Buy", usdamount, tx_1)
+                    details = refreshwallet(request)
+                    messages.success(request, mark_safe("Transaction Successful, transaction id: " + tx_1 + "<br/>" + "To see your transaction use the following link: <br/> https://blockstream.info/testnet/tx/" + tx_1))
                 else:
-                    tx_1 = adminwallet.send([(userdetails.public_key, usdamount, 'usd')], fee=5000, absolute_fee=True)
-                    messages.info(request, "Normal")
-                fiat(request, "Buy", usdamount, tx_1)
-                details = refreshwallet(request)
-                messages.success(request, mark_safe("Transaction Successful, transaction id: " + tx_1 + "<br/>" + "To see your transaction use the following link: <br/> https://blockstream.info/testnet/tx/" + tx_1))
-            else:
-                messages.info(request, "Insufficient funds")
-        except:
-            messages.info(request,"Transaction Failed")
+                    messages.info(request, "Insufficient funds")
+            except:
+                messages.info(request,"Transaction Failed")
 
-    return render(request, 'btc_buy.html', details)
+        return render(request, 'btc_buy.html', details)
+    else:
+        return login(request)
 
 def btc_sell(request):
-    details = refreshwallet(request)
-    fiatdetail = details.get("fiatdetails")
-    btcdetails = details.get("btcdetails")
-    userdetails = details.get("userdetails")
-    if request.method == 'POST':
-        usdamount = request.POST['usdamount']
+    if request.user.is_authenticated:
+        details = refreshwallet(request)
+        fiatdetail = details.get("fiatdetails")
+        btcdetails = details.get("btcdetails")
+        userdetails = details.get("userdetails")
+        if request.method == 'POST':
+            usdamount = request.POST['usdamount']
 
-        try:
-            if (btcdetails.balance_usd >= usdamount):
-                admindetails = CustomUser.objects.prefetch_related().get(id=1)
-                userwallet = PrivateKeyTestnet(userdetails.private_key)
+            try:
+                if (btcdetails.balance_usd >= usdamount):
+                    admindetails = CustomUser.objects.prefetch_related().get(id=1)
+                    userwallet = PrivateKeyTestnet(userdetails.private_key)
 
-                tx_1 = userwallet.send([(admindetails.public_key, usdamount, 'usd')], fee=5000, absolute_fee=True)
-                fiat(request, "Sell", usdamount, tx_1)
-                details = refreshwallet(request)
-                messages.success(request, mark_safe("Transaction Successful, transaction id: " + tx_1 + "<br/>" + "To see your transaction use the following link: <br/> https://blockstream.info/testnet/tx/" + tx_1))
-            else:
-                messages.info(request, "Insufficient funds")
-        except :
-            messages.info(request,"Transaction Failed") 
+                    tx_1 = userwallet.send([(admindetails.public_key, usdamount, 'usd')], fee=5000, absolute_fee=True)
+                    fiat(request, "Sell", usdamount, tx_1)
+                    details = refreshwallet(request)
+                    messages.success(request, mark_safe("Transaction Successful, transaction id: " + tx_1 + "<br/>" + "To see your transaction use the following link: <br/> https://blockstream.info/testnet/tx/" + tx_1))
+                else:
+                    messages.info(request, "Insufficient funds")
+            except :
+                messages.info(request,"Transaction Failed") 
 
-    return render(request, 'btc_sell.html', details)
+        return render(request, 'btc_sell.html', details)
+    else:
+        return index(request)
 
 
 def usd_deposit(request):
-    details = refreshwallet(request)
-    # Number of digits in reference
-    num = 12
-    reference = ''.join(secrets.choice(string.ascii_letters + string.digits) for x in range(num))
-    details['reference'] = reference
+    if request.user.is_authenticated:
+        details = refreshwallet(request)
+        # Number of digits in reference
+        num = 12
+        reference = ''.join(secrets.choice(string.ascii_letters + string.digits) for x in range(num))
+        details['reference'] = reference
 
-    if request.method == 'POST':
-        usdamount = request.POST['usdamount']   
-        try:
-            if int(usdamount) > 0 :
-                proof = request.FILES['proof']
-                user_request(request, "Deposit", usdamount, reference, proof, "", "")
-                messages.success(request,"Transaction Successful")
-            else:
-                messages.info(request,"Enter a valid amount")
-        except MultiValueDictKeyError:
-            messages.info(request,"Upload Proof")
-        except:
-            messages.info(request,"Transaction Failed")
-       
-    return render(request, 'usd_deposit.html',details)
+        if request.method == 'POST':
+            usdamount = request.POST['usdamount']   
+            try:
+                if int(usdamount) > 0 :
+                    proof = request.FILES['proof']
+                    user_request(request, "Deposit", usdamount, reference, proof, "", "")
+                    messages.success(request,"Transaction Successful")
+                else:
+                    messages.info(request,"Enter a valid amount")
+            except MultiValueDictKeyError:
+                messages.info(request,"Upload Proof")
+            except:
+                messages.info(request,"Transaction Failed")
+        
+        return render(request, 'usd_deposit.html',details)
+    else:
+        return index(request)
 
 def usd_withdraw(request):
-    details = refreshwallet(request)
-    fiatdetails = details.get("fiatdetails")
-    # Number of digits in reference
-    num = 12
-    reference = ''.join(secrets.choice(string.ascii_letters + string.digits) for x in range(num))
-    details['reference'] = reference
+    if request.user.is_authenticated:
+        details = refreshwallet(request)
+        fiatdetails = details.get("fiatdetails")
+        # Number of digits in reference
+        num = 12
+        reference = ''.join(secrets.choice(string.ascii_letters + string.digits) for x in range(num))
+        details['reference'] = reference
 
-    if request.method == 'POST':
-        usdamount = request.POST['usdamount']
-        bank_name = request.POST['bank_name']
-        account_number = request.POST['account_number']
-        
+        if request.method == 'POST':
+            usdamount = request.POST['usdamount']
+            bank_name = request.POST['bank_name']
+            account_number = request.POST['account_number']
+            
 
-        try:
-            proof = request.FILES['proof']
-            if (int(usdamount)<=int(fiatdetails.balance) and len(bank_name)>0 and len(account_number)>0) :
-                user_request(request, "Withdraw", usdamount, reference, proof, bank_name, account_number )
-                messages.success(request,"Transaction Successful")
-            else:
+            try:
+                proof = request.FILES['proof']
+                if (int(usdamount)<=int(fiatdetails.balance) and len(bank_name)>0 and len(account_number)>0) :
+                    user_request(request, "Withdraw", usdamount, reference, proof, bank_name, account_number )
+                    messages.success(request,"Transaction Successful")
+                else:
+                    messages.info(request,"Transaction Failed")
+            except MultiValueDictKeyError:
+                messages.info(request,"Upload Proof")
+            except:
                 messages.info(request,"Transaction Failed")
-        except MultiValueDictKeyError:
-            messages.info(request,"Upload Proof")
-        except:
-            messages.info(request,"Transaction Failed")
 
-    return render(request, 'usd_withdraw.html',details)
+        return render(request, 'usd_withdraw.html',details)
+    else:
+        return index(request)
+    
 
 def help(request):
     return render(request,'help.html')
 
+
 def user_requests(request):
-    refreshwallet(request)
-    # details = refreshwallet(request)
-    userid = request.user.id
-    # Use objects.filter because it allows for iteration through the object
-    # Only need fiat and requests for now
-    userdetails = CustomUser.objects.filter(id=userid)
-    btcdetails = Btc_Details.objects.filter(id=userid)
-    fiatdetails = Fiat_Details.objects.filter(id=userid)
-    transactiondetails = Fiat_Transactions.objects.filter(user_id=userid)
-    userrequests = User_Requests.objects.filter(user_id=userid)
-    details = {'userdetails' : userdetails, 'btcdetails' : btcdetails, 'fiatdetails' : fiatdetails, 'transactiondetails' : transactiondetails, 'userrequests' : userrequests}
-    return render(request, 'user_requests.html' ,details)
+    if request.user.is_authenticated:
+        refreshwallet(request)
+        # details = refreshwallet(request)
+        userid = request.user.id
+        # Use objects.filter because it allows for iteration through the object
+        # Only need fiat and requests for now
+        userdetails = CustomUser.objects.filter(id=userid)
+        btcdetails = Btc_Details.objects.filter(id=userid)
+        fiatdetails = Fiat_Details.objects.filter(id=userid)
+        transactiondetails = Fiat_Transactions.objects.filter(user_id=userid)
+        userrequests = User_Requests.objects.filter(user_id=userid)
+        details = {'userdetails' : userdetails, 'btcdetails' : btcdetails, 'fiatdetails' : fiatdetails, 'transactiondetails' : transactiondetails, 'userrequests' : userrequests}
+        return render(request, 'user_requests.html' ,details)
+    return index(request)
 
 def refreshwallet(request):
     
