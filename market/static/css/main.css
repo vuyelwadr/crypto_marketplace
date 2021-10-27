@@ -44,3 +44,14 @@ code {
   text-align: center !important;
   display: inline-block !important;
 }
+/* 
+table { 
+  width: 50%; 
+  border-collapse: collapse; 
+}
+
+td, th { 
+  padding: 6px; 
+  border: 1px solid #ccc; 
+  text-align: left; 
+} */

@@ -1,0 +1,24 @@
+{% extends "base.html" %}
+
+{% block content %}
+<!-- review form -->
+<section id ="review-form" style="height: 100px">
+    <div id="bootstrap-override" class="form-section  justify-content-center" align="center">
+      <form id="reviewForm" class="default-form align-items-center" method="POST">
+        {% csrf_token %}
+        <h1>Write a review</h1> <br>
+        <div class="mb-3">
+          <label for="title" class="form-label">Title</label>
+          <input class="form-control" id="title" name="title">
+        </div>
+        <div class="mb-3">
+          <label for="review" class="form-label">Review</label><br>
+          <textarea id="review" name="review" rows="3" cols="40"></textarea>
+          
+        </div>
+        <button type="submit" value="review" class="btn btn-primary">Submit</button>
+        
+      </form>
+    </div>
+</section>
+{% endblock %}

@@ -119,7 +119,7 @@ def register(request):
                     fiattransactions = Fiat_Transactions(user.id, date=str(date.today()), amount=100, transaction_type='Deposit', notes='Initial Deposit')
                     fiattransactions.save()
 
-                    print('User Created')
+                    messages.info(request, 'User Created')
                     return redirect('login')
 
             else:
@@ -252,7 +252,6 @@ def usd_withdraw(request):
             bank_name = request.POST['bank_name']
             account_number = request.POST['account_number']
             
-
             try:
                 proof = request.FILES['proof']
                 if (int(usdamount)<=int(fiatdetails.balance) and len(bank_name)>0 and len(account_number)>0) :
@@ -272,6 +271,9 @@ def usd_withdraw(request):
 
 def help(request):
     return render(request,'help.html')
+
+def review(request):
+    return render(request,'review.html')
 
 
 def user_requests(request):

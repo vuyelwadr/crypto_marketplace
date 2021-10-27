@@ -4,11 +4,10 @@
 
 {% block content %}
     <section id="details">
-
-        <div id="requests" class="container">
-            <h2>{{ user.username }} Requests</h2>
+        <div id="requests" class="container table-responsive-sm">
+            <h2>Requests</h2>
             <p>The table shows your deposit and withdrawal requests</p>            
-            <table id="user_requests" class="table table-bordered">
+            <table id="user_requests" class="table table-bordered table-sm">
                 <thead>
                     <tr>
                     <th>Request Type</th>
@@ -32,10 +31,10 @@
             </table>
         </div>
 
-        <div id="fiat_transactions" class="container">
-            <h2>{{ user.username }} Fiat transactions</h2>
+        <div id="fiat_transactions" class="container table-responsive-sm">
+            <h2>Fiat transactions</h2>
             <p>The table shows your fiat transactions</p>            
-            <table id="user_requests" class="table table-bordered">
+            <table id="user_requests" class="table table-bordered table-sm">
                 <thead>
                     <tr>
                     <th>Transaction Type</th>

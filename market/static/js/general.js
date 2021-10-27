@@ -6,10 +6,17 @@ if (useramount_crypto != null)
 function btc_calculator() {
     var amount = 0;
     amount = useramount_crypto.value;
-    btcamount = amount / btcprice;
-    var show = btcamount.toFixed(8) + "BTC"; 
-    document.getElementById("btc-buy").innerHTML = "Buying: " + show;
-    document.getElementById("btc-sell").innerHTML = "Selling: " + show;
+    if (amount <= 0){
+        document.getElementById("btc-buy").innerHTML = "Enter a valid Amount";
+        document.getElementById("btc-sell").innerHTML = "Enter a valid Amount";
+    }
+    else{
+        btcamount = amount / btcprice;
+        var show = btcamount.toFixed(8) + "BTC"; 
+        document.getElementById("btc-buy").innerHTML = "Buying: " + show;
+        document.getElementById("btc-sell").innerHTML = "Selling: " + show;
+    }
+    
 }
 
 //USD pages
@@ -20,8 +27,14 @@ if (useramount_fiat != null)
 function usd_calculator(){
     var amount = 0;
     amount = useramount_fiat.value
-    document.getElementById("usd-deposit").innerHTML = "Ballance will be: $" + (parseInt(usdbalance) + parseInt(amount));
-    document.getElementById("usd-withdraw").innerHTML = "Ballance will be: $" + (parseInt(usdbalance) - parseInt(amount));
+    if (amount <= 0){
+        document.getElementById("usd-deposit").innerHTML = "Enter a valid Amount";
+        document.getElementById("usd-withdraw").innerHTML = "Enter a valid Amount";
+    }
+    else{
+        document.getElementById("usd-deposit").innerHTML = "Ballance will be: $" + (parseInt(usdbalance) + parseInt(amount));
+        document.getElementById("usd-withdraw").innerHTML = "Ballance will be: $" + (parseInt(usdbalance) - parseInt(amount));
+    }
 }
 
 //help section
