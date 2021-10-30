@@ -56,5 +56,9 @@ add successful account creation
 fix negative user input
 fix overdraft input resulting in negative number
 
+add an example of what users are expected to upload (an image)
+add contact us page
+remove background.js from help page?
+
 
 

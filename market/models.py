@@ -21,6 +21,9 @@ class Fiat_Details(models.Model):
     # Balance in USD
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, default=None, null=True)
     balance = models.IntegerField()
+    bank_details = models.CharField(max_length=50, default="None")
+    account_name = models.CharField(max_length=50, default="None")
+    account_number = models.CharField(max_length=20, default="None")
 
 class Fiat_Transactions(models.Model):
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, default=None, null=True)

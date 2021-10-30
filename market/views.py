@@ -20,34 +20,6 @@ def index(request):
         userid = request.user.id
         details = refreshwallet(request)
         userdetails = details.get("userdetails")
-
-        if request.method == 'POST':
-            url = "https://twinword-sentiment-analysis.p.rapidapi.com/analyze/"
-            headers = {
-                'content-type': "application/x-www-form-urlencoded",
-                'x-rapidapi-host': "twinword-sentiment-analysis.p.rapidapi.com",
-                'x-rapidapi-key': "42e11407a8msh3e7bfe671792741p13625fjsn79c7af84436e"
-                }
-
-            title = request.POST['title']
-            body = request.POST['review']
-
-            author = userid
-            author_email = userdetails.email
-
-            payload = {'text' : body}
-            response = requests.request("POST", url, data=payload, headers=headers)
-            temp_score = response.json()
-            score = temp_score.get('score')
-
-            if score>0:
-                sentiment = "Positive"
-            elif score== 0:
-                sentiment = "Neutral"
-            else:
-                sentiment = "Negative"
-            reviews = Reviews.objects.create(user_id=userid, author_email=userdetails.email, review_title=title, review_body=body, creation_date=str(date.today()), sentiment_score=score, sentiment=sentiment)
-            messages.success(request, "Review Submitted")
         
         return render(request, 'dashboard.html', details)
     else:
@@ -285,18 +257,71 @@ def user_requests(request):
         return render(request, 'user_requests.html' ,details)
     return index(request)
 
-def help(request):
-    return render(request,'help.html')
 
 def review(request):
-    return render(request,'review.html')
+    if request.user.is_authenticated:
+        userid = request.user.id
+        details = refreshwallet(request)
+        userdetails = details.get("userdetails")
+        if request.method == 'POST':
+            url = "https://twinword-sentiment-analysis.p.rapidapi.com/analyze/"
+            headers = {
+                'content-type': "application/x-www-form-urlencoded",
+                'x-rapidapi-host': "twinword-sentiment-analysis.p.rapidapi.com",
+                'x-rapidapi-key': "42e11407a8msh3e7bfe671792741p13625fjsn79c7af84436e"
+                }
+
+            title = request.POST['title']
+            body = request.POST['review']
+            
+            author = userid
+            author_email = userdetails.email
+
+            payload = {'text' : body}
+            response = requests.request("POST", url, data=payload, headers=headers)
+            temp_score = response.json()
+            score = temp_score.get('score')
+
+            if score>0:
+                sentiment = "Positive"
+            elif score== 0:
+                sentiment = "Neutral"
+            else:
+                sentiment = "Negative"
+            reviews = Reviews.objects.create(user_id=userid, author_email=userdetails.email, review_title=title, review_body=body, creation_date=str(date.today()), sentiment_score=score, sentiment=sentiment)
+            messages.success(request, "Review Submitted")
+        return render(request,'review.html')
+    else:
+        return index(request)
 
 def user_details(request):
     if request.user.is_authenticated:
-        
+        userid = request.user.id
+        if request.method == 'POST':
+            bank_name = request.POST['bank_name']
+            account_name = request.POST['account_name']
+            account_number = request.POST['account_number']
+            try:
+                if (bank_name != "None" and account_name != "" and account_number != ""):
+                    fiatdetail = Fiat_Details.objects.get(id = userid) 
+                    fiatdetail.bank_details = bank_name
+                    fiatdetail.account_name = account_name
+                    fiatdetail.account_number = account_number
+                    fiatdetail.save()
+                    messages.success(request, "Details Saved")
+                else:
+                    messages.info(request, "Enter valid details")
+            except:
+                messages.info(request, "Failed to save details")
+            
         return render(request, 'user_details.html')
     else:
         return index(request)
+
+
+def contact_us(request):
+    # https://www.section.io/engineering-education/how-to-send-email-in-django/
+    return render(request,'contact_us.html')
 
 def refreshwallet(request):
     
