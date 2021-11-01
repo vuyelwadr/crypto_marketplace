@@ -198,7 +198,7 @@ def usd_deposit(request):
             try:
                 if int(usdamount) > 0 :
                     proof = request.FILES['proof']
-                    user_request(request, "Deposit", usdamount, reference, proof, "", "")
+                    user_request(request, "Deposit", usdamount, reference, proof, settings.DEFAULT_BANK, settings.DEFAULT_BANK_ACCOUNT)
                     messages.success(request,"Transaction Successful")
                 else:
                     messages.info(request,"Enter a valid amount")
@@ -222,8 +222,9 @@ def usd_withdraw(request):
 
         if request.method == 'POST':
             usdamount = request.POST['usdamount']
-            bank_name = request.POST['bank_name']
-            account_number = request.POST['account_number']
+            bank_name = fiatdetails.bank_details
+            account_number = fiatdetails.account_number
+            messages.info(request, bank_name)
             
             try:
                 proof = request.FILES['proof']
@@ -269,7 +270,7 @@ def review(request):
             headers = {
                 'content-type': "application/x-www-form-urlencoded",
                 'x-rapidapi-host': "twinword-sentiment-analysis.p.rapidapi.com",
-                'x-rapidapi-key': "42e11407a8msh3e7bfe671792741p13625fjsn79c7af84436e"
+                'x-rapidapi-key': settings.RAPID_API_KEY
                 }
 
             title = request.POST['title']
@@ -397,4 +398,4 @@ def user_request(request, t_type, amount, reference, proof, bank, account):
  
         # if user enters a non integer value throw a transaction
     if (t_type == "Deposit" or t_type == "Withdraw"):
-        userrequest = User_Requests.objects.create(user_id=userid, amount=amount, request=t_type, reference=reference, proof=proof, date=str(date.today()), status="Pending")
+        userrequest = User_Requests.objects.create(user_id=userid, amount=amount, request=t_type, reference=reference, bank_name = bank, account_number=account, proof=proof, date=str(date.today()), status="Pending")

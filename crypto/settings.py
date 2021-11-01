@@ -189,3 +189,9 @@ EMAIL_HOST_USER = 'cmarket263@gmail.com'
 EMAIL_HOST_PASSWORD = "wjwQZ3Re+N_'6R(M"
 EMAIL_PORT = 587
 EMAIL_USE_TLS = True
+
+# the default bank to send money to
+DEFAULT_BANK = 'Virtual'
+DEFAULT_BANK_ACCOUNT = '00'
+
+RAPID_API_KEY = '42e11407a8msh3e7bfe671792741p13625fjsn79c7af84436e'

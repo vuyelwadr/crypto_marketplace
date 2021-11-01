@@ -23,11 +23,11 @@
                 {% csrf_token %}
                 <div class="mb-3">  
                   <label for="usdamount_fiat" class="form-label">USD amount to transfer into your bank account</label>
-                  <input class="form-control" id="usdamount_fiat" name="usdamount">
+                  <input class="form-control" id="usdamount_fiat" name="usdamount" required>
                 </div>
                 <div class="mb-3">
                     <label for="proof">Upload an <b>image</b> of your <b>face</b> with your <b>passport/id</b> and <b>reference</b> in the frame for <b>Security</b></label>
-                    <input class="form-control" type="file" id="proof" name="proof" accept="image/*"> 
+                    <input class="form-control" type="file" id="proof" name="proof" accept="image/*" required> 
                 </div>
                 <h2 id="usd-deposit"  style="display:none"></h2>
                 <h2 id="usd-withdraw"></h2>
