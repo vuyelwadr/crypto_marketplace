@@ -178,3 +178,14 @@ AUTH_USER_MODEL = 'market.CustomUser'
 # Activate Django-Heroku.
 
 django_heroku.settings(locals())
+
+# Email settings
+
+DEFAULT_FROM_EMAIL = 'cmarket263@gmail.com'
+DEFAULT_TO_EMAIL = 'cmarket263@gmail.com'
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST = 'smtp.gmail.com'
+EMAIL_HOST_USER = 'cmarket263@gmail.com'
+EMAIL_HOST_PASSWORD = "wjwQZ3Re+N_'6R(M"
+EMAIL_PORT = 587
+EMAIL_USE_TLS = True

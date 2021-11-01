@@ -13,7 +13,8 @@ from django.utils.safestring import mark_safe
 import requests
 from django.utils.datastructures import MultiValueDictKeyError
 from django.db.models import Sum, Count
-
+from django.core.mail import send_mail
+from django.conf import settings
 
 def index(request):
     if request.user.is_authenticated:
@@ -321,6 +322,15 @@ def user_details(request):
 
 def contact_us(request):
     # https://www.section.io/engineering-education/how-to-send-email-in-django/
+    if request.method == 'POST':
+        name = request.POST['name']
+        email = request.POST['email']
+        subject = request.POST['subject']
+        message = request.POST['message']
+        
+        send_mail(subject, "Name: " + name + "\n" + "Email: " + email + "\n" +"\n" + message, settings.DEFAULT_FROM_EMAIL, [settings.DEFAULT_TO_EMAIL])
+        messages.success(request, "Email sent successfully")
+
     return render(request,'contact_us.html')
 
 def refreshwallet(request):

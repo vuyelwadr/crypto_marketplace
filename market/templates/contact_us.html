@@ -2,7 +2,43 @@
 {% load static %}
 
 {% block content %}
-
+<!-- Contact form -->
+<section id ="review-form" style="height: 100px">
+    <div id="bootstrap-override" class="form-section  justify-content-center" align="center">
+      <form id="reviewForm" class="default-form align-items-center" method="POST">
+        {% csrf_token %}
+        <h1>Contact Us</h1>
+        <h5>Fields marked with a * are required</h5>
+        {% for message in messages %}
+            <h5 style="color: red;">{{ message }}</h5>
+            {% endfor %}
+        <div class="mb-3">
+          <label for="name" class="form-label">Full Name</label>
+          <input class="form-control" id="name" name="name">
+        </div>
+        <div class="mb-3">
+            <label for="email" class="form-label">Email*</label>
+            <input type="email" class="form-control" id="email" name="email" required>
+        </div>
+        <div class="mb-3">
+            <label for="phone" class="form-label">Phone Number</label>
+            <input class="form-control" id="phone" name="phone">
+          </div>
+        <div class="mb-3">
+            <label for="subject" class="form-label">Subject</label>
+            <input class="form-control" id="subject" name="subject">
+          </div>
+        <div class="mb-3">
+          <label for="message" class="form-label">Message*</label><br>
+          <textarea id="message" name="message" rows="3" cols="40" required></textarea>
+          
+          
+        </div>
+        <button type="contact" value="contact" class="btn btn-primary">Contact Us</button>
+        
+      </form>
+    </div>
+</section>
 
 {% endblock %}
 
