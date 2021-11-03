@@ -8,7 +8,7 @@
         <div align="center">
             <h1>{{user.username}}</h1>
             Current price of Bitcoin: <b>${{btcprice}}</b> <br>
-            Current Bitcoin balance: <b>{{btcdetails.balance_btc}}BTC</b> <br>
+            Current Bitcoin balance: <b>{{btcdetails.balance_btc}}BTC / ${{btcdetails.balance_usd}}</b> <br>
             Current USD balance: <b>${{fiatdetails.balance}}</b> <br>
         </div>
 
@@ -20,11 +20,13 @@
                   <label for="USD-amount" class="form-label">Amount of bitcoin you want in USD</label>
                   <input class="form-control" id="usdamount_crypto" name="usdamount" required>
                   <input type="hidden" name="transaction_priority" value="0">
-                  <input type="checkbox" name="transaction_priority" value="1">  Fast-Transaction <br> pay a higher fee to make the transaction faster
+                  <input type="checkbox" name="transaction_priority" value="1">  Fast-Transaction <br> Pay a higher fee to make the transaction faster <br> Default fee is $3
+                  <p id="fee">The fee will come from your USD wallet</p>
                 </div>
                  <!-- Display message when user clicks buy -->
                 <h2 id="btc-buy"></h2>
                 <h2 id="btc-sell" style="display:none;"></h2>
+                <h2 id="btc-withdraw" style="display:none;"></h2>
                 <button id="make-transaction" type="submit" value="submit" class="btn btn-primary">Buy</button>
             </form>
 

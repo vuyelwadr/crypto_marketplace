@@ -1,0 +1,49 @@
+{% extends "base.html" %}
+{% load static %}
+
+
+{% block content %}
+        <!-- BTC Buy Dashboard -->
+        <section id="btc_buy" align="center">
+            <div align="center">
+                <h1>{{user.username}}</h1>
+                Current Bitcoin balance: <b>{{btcdetails.balance_btc}}BTC / ${{btcdetails.balance_usd}}</b> <br>
+            </div>
+
+            <div id="bootstrap-override" class="form-section" align="center">
+                <form id="btc-buy-Form" class="default-form align-items-center" method="POST">
+                    {% csrf_token %}
+    
+                    <div class="mb-3">
+                      <label for="USD-amount" class="form-label">USD Amount of bitcoin you want to withdraw</label>
+                      <input class="form-control" id="usdamount_crypto" name="usdamount" required>
+                      <label for="btc_address" class="form-label">BTC address to withdraw to</label>
+                      <input class="form-control" id="btc_address" name="btc_address" required>
+                      <input type="hidden" name="transaction_priority" value="0">
+                      <input type="checkbox" name="transaction_priority" value="1">  Fast-Transaction <br> Pay a higher fee to make the transaction faster <br> Default fee is $3
+                      <p id="fee">The fee will come from your BTC wallet</p>
+                    </div>
+                     <!-- Display message when user clicks buy -->
+                    <h2 id="btc-buy" style="display:none;"></h2>
+                    <h2 id="btc-sell" style="display:none;"></h2>
+                    <h2 id="btc-withdraw"></h2>
+                    <button id="make-transaction" type="submit" value="submit" class="btn btn-primary">Withdraw</button>
+                </form>
+    
+                {% for message in messages %}
+                <h5 style="color: red;">{{ message }}</h5>
+                {% endfor %}
+    
+            </div>
+               
+                
+    
+
+        </section>
+{% endblock %}
+
+{% block scripts %}
+    <!-- save price variable so you can access it inside the script -->
+    <script>var btcprice = "{{btcprice}}" </script>
+    <script src="{% static 'js/general.js'%}"></script>
+{% endblock %}

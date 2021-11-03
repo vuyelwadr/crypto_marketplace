@@ -16,6 +16,12 @@ from django.db.models import Sum, Count
 from django.core.mail import send_mail
 from django.conf import settings
 
+# Bitcoin transaction fees
+# if update change in btc buy, sell and withdraw pages
+btc_transaction_fee = 3
+btc_fast_transaction_fee = 10
+
+
 def index(request):
     if request.user.is_authenticated:
         userid = request.user.id
@@ -134,24 +140,26 @@ def btc_buy(request):
             usdamount = request.POST['usdamount']  
             transaction_priority = request.POST['transaction_priority']
             # Admin account has id 1
-
             try:
-                if (fiatdetail.balance > int(usdamount)):
+                if (fiatdetail.balance > int(usdamount) + btc_transaction_fee):
                     admindetails = CustomUser.objects.prefetch_related().get(id=1)
-                    adminwallet = PrivateKeyTestnet(admindetails.private_key)
-                    if (transaction_priority=="1"):
+                    adminwallet = PrivateKeyTestnet(admindetails.private_key) 
+                    # add a $3 or $10 transaction fee fast transaction will revert to normal if insufficient funds
+                    if (transaction_priority=="1" and fiatdetail.balance > int(usdamount) + btc_fast_transaction_fee):
                         tx_1 = adminwallet.send([(userdetails.public_key, usdamount, 'usd')])
-                        messages.info(request, "Fast")
+                        fiat(request, "1", btc_fast_transaction_fee, tx_1)
+                        messages.info(request, "Fast Transaction")
                     else:
                         tx_1 = adminwallet.send([(userdetails.public_key, usdamount, 'usd')], fee=5000, absolute_fee=True)
-                        messages.info(request, "Normal")
+                        fiat(request, "0", btc_transaction_fee, tx_1)
+                        messages.info(request, "Normal Transaction")
                     fiat(request, "Buy", usdamount, tx_1)
                     details = refreshwallet(request)
                     messages.success(request, mark_safe("Transaction Successful, transaction id: " + tx_1 + "<br/>" + "To see your transaction use the following link: <br/> https://blockstream.info/testnet/tx/" + tx_1))
                 else:
                     messages.info(request, "Insufficient funds")
             except:
-                messages.info(request,"Transaction Failed")
+                messages.info(request,"Transaction Failed") 
 
         return render(request, 'btc_buy.html', details)
     else:
@@ -165,13 +173,19 @@ def btc_sell(request):
         userdetails = details.get("userdetails")
         if request.method == 'POST':
             usdamount = request.POST['usdamount']
+            transaction_priority = request.POST['transaction_priority']
 
             try:
-                if (btcdetails.balance_usd >= usdamount):
+                if (btcdetails.balance_usd >= usdamount+btc_transaction_fee):
                     admindetails = CustomUser.objects.prefetch_related().get(id=1)
                     userwallet = PrivateKeyTestnet(userdetails.private_key)
-
-                    tx_1 = userwallet.send([(admindetails.public_key, usdamount, 'usd')], fee=5000, absolute_fee=True)
+                    if (transaction_priority=="1"):
+                        tx_1 = userwallet.send([(admindetails.public_key, usdamount, 'usd')])
+                        messages.info(request, "Fast Transaction")
+                    else:
+                        tx_1 = userwallet.send([(admindetails.public_key, usdamount, 'usd')], fee=5000, absolute_fee=True)
+                        messages.info(request, "Normal Transaction")
+                    
                     fiat(request, "Sell", usdamount, tx_1)
                     details = refreshwallet(request)
                     messages.success(request, mark_safe("Transaction Successful, transaction id: " + tx_1 + "<br/>" + "To see your transaction use the following link: <br/> https://blockstream.info/testnet/tx/" + tx_1))
@@ -334,6 +348,46 @@ def contact_us(request):
 
     return render(request,'contact_us.html')
 
+def btc_deposit(request):
+    if request.user.is_authenticated:
+        userid = request.user.id
+        details = refreshwallet(request)
+
+        return render(request, 'btc_deposit.html', details)
+    else:
+        return index(request)
+
+def btc_withdraw(request):
+    if request.user.is_authenticated:
+        userid = request.user.id
+        details = refreshwallet(request)
+        userdetails = details.get("userdetails")
+        btcdetails = details.get("btcdetails")
+        admindetails = CustomUser.objects.prefetch_related().get(id=1)
+        if request.method == 'POST':
+            usdamount = request.POST['usdamount']  
+            btc_address = request.POST['btc_address']  
+            transaction_priority = request.POST['transaction_priority']
+            # try:
+            if (int(float(btcdetails.balance_usd)) >= int(usdamount)+btc_transaction_fee):
+                userwallet = PrivateKeyTestnet(userdetails.private_key)
+                # convet float number to int
+                if (transaction_priority=="1" and int(float(btcdetails.balance_usd)) > int(usdamount) + btc_fast_transaction_fee):
+                        tx_1 = userwallet.send([(admindetails.public_key, usdamount, 'usd')])
+                        messages.info(request, "Fast Transaction")
+                else:
+                    tx_1 = userwallet.send([(admindetails.public_key, usdamount, 'usd')], fee=5000, absolute_fee=True)
+                    messages.info(request, "Normal Transaction")
+                details = refreshwallet(request)
+                messages.success(request, mark_safe("Transaction Successful, transaction id: " + tx_1 + "<br/>" + "To see your transaction use the following link: <br/> https://blockstream.info/testnet/tx/" + tx_1))
+            else:
+                messages.info(request, "Insufficient funds")
+            # except:
+            #     messages.info(request, "Transaction Failed")
+        return render(request, 'btc_withdraw.html', details)
+    else:
+        return index(request)
+
 def refreshwallet(request):
     
     # load all tables and create objects accessible in the html  file
@@ -390,6 +444,18 @@ def fiat(request,transaction, sum, reference):
         fiatdetail.save()
 
         fiattransactions = Fiat_Transactions.objects.create(user_id=userid, date=str(date.today()), amount=sum, transaction_type='Sell', notes='BTC Sell ID: '+reference)
+
+    elif (transaction == "1"):
+        fiatdetail = Fiat_Details(userid, balance=(int(fiatdetails.balance)-int(sum))) 
+        fiatdetail.save()
+
+        fiattransactions = Fiat_Transactions.objects.create(user_id=userid, date=str(date.today()), amount=sum, transaction_type='Fee', notes='BTC Fast Transaction Fee: '+reference)
+
+    elif (transaction == "0"):
+        fiatdetail = Fiat_Details(userid, balance=(int(fiatdetails.balance)-int(sum))) 
+        fiatdetail.save()
+
+        fiattransactions = Fiat_Transactions.objects.create(user_id=userid, date=str(date.today()), amount=sum, transaction_type='Fee', notes='BTC Transaction Fee: '+reference)
 
 
 

@@ -1,0 +1,23 @@
+{% extends "base.html" %}
+{% load static %}
+
+
+{% block content %}
+        <!-- BTC Buy Dashboard -->
+        <section id="btc_buy" align="center">
+            <div align="center">
+                <h1>{{user.username}}</h1>
+                Current Bitcoin balance: <b>{{btcdetails.balance_btc}}BTC / ${{btcdetails.balance_usd}}</b> <br>
+                BTC Wallet address: <b>{{btcdetails.public_key}}</b> <br>
+                <h5>BTC QR Code</h5>
+                <img src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data={{btcdetails.public_key}}" alt="{{btcdetails.public_key}}">
+                <p>Send funds to the BTC Wallet address provided <br> <b>N.B Only Send BTC Testnet Funds</b></p>
+            </div>
+               
+                {% for message in messages %}
+                <h5 style="color: red;">{{ message }}</h5>
+                {% endfor %}
+    
+
+        </section>
+{% endblock %}

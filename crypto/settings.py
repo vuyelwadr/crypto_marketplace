@@ -191,6 +191,7 @@ EMAIL_PORT = 587
 EMAIL_USE_TLS = True
 
 # the default bank to send money to
+# Change usd_deposit page details when updated
 DEFAULT_BANK = 'Virtual'
 DEFAULT_BANK_ACCOUNT = '00'
 

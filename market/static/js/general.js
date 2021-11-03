@@ -15,6 +15,7 @@ function btc_calculator() {
         var show = btcamount.toFixed(8) + "BTC"; 
         document.getElementById("btc-buy").innerHTML = "Buying: " + show;
         document.getElementById("btc-sell").innerHTML = "Selling: " + show;
+        document.getElementById("btc-withdraw").innerHTML = "Withdraw: " + show;
     }
     
 }

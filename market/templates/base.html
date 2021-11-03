@@ -23,82 +23,79 @@
     </head>
 
     <body>
+      <nav class="navbar navbar navbar-expand-lg navbar-dark bg-dark py-4">
+        <div class="container-fluid">  
+          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNavAltMarkup" aria-controls="navbarNavAltMarkup" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+          </button>
+          <a class="navbar-brand abs" href="{% url 'index' %}"><img src="{% static 'img/loggo.png' %}" alt="Crypto Z loggo" style="height: 100px;"> </a>
+          <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
+            <div class="navbar-nav">
+              <a class="nav-link active" aria-current="page" href="{% url 'index' %}">Home</a>
+              <!-- Show different nav menu items to logged in and unauthenticated users -->
+              {% if user.is_authenticated %}
 
-        <nav class="navbar navbar navbar-expand-lg navbar-dark bg-dark py-4">
-            <div class="container-fluid"> 
-              <a class="navbar-brand abs" href="{% url 'index' %}"><img src="{% static 'img/loggo.png' %}" alt="Crypto Z loggo" style="height: 100px;"> </a>
-              <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNavAltMarkup" aria-controls="navbarNavAltMarkup" aria-expanded="false" aria-label="Toggle navigation">
-                <span class="navbar-toggler-icon"></span>
-              </button>
-              <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
-                <div class="navbar-nav ms-auto">
-                  <a class="nav-link active" aria-current="page" href="{% url 'index' %}">Home</a>
-                  <!-- Show different nav menu items to logged in and unauthenticated users -->
-                  {% if user.is_authenticated %}
-
-                  <div class="container-fluid">
-                    <div class="navbar-collapse" id="navbarNavDarkDropdown">
-                      <ul class="navbar-nav">
-                        <li class="nav-item dropdown">
-                          <a class="nav-link dropdown-toggle" href="#" id="navbarDarkDropdownMenuLink" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                            Actions
-                          </a>
-                          <ul class="dropdown-menu dropdown-menu-dark" aria-labelledby="navbarDarkDropdownMenuLink">
-                            <li><a class="dropdown-item" href="{% url 'btc_buy' %}">Buy Bitcoin</a></li>
-                            <li><a class="dropdown-item" href="{% url 'btc_sell' %}">Sell Bitcoin</a></li>
-                            <li><a class="dropdown-item" href="{% url 'usd_deposit' %}">Deposit USD</a></li>
-                            <li><a class="dropdown-item" href="{% url 'usd_withdraw' %}">Withdraw USD</a></li>
-                          </ul> 
-                        </li>
-                      </ul>
-                    </div>
+              <div class="container-fluid">
+                <div class="navbar-collapse">
+                  <ul class="navbar-nav">
+                    <li class="nav-item dropdown">
+                      <a class="nav-link dropdown-toggle" href="#" id="navbarDarkDropdownMenuLink" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                        Actions
+                      </a>
+                      <ul class="dropdown-menu dropdown-menu-dark" aria-labelledby="navbarDarkDropdownMenuLink">
+                        <li><a class="dropdown-item" href="{% url 'btc_buy' %}">Buy Bitcoin</a></li>
+                        <li><a class="dropdown-item" href="{% url 'btc_sell' %}">Sell Bitcoin</a></li>
+                        <li><a class="dropdown-item" href="{% url 'btc_deposit' %}">Deposit Bitcoin</a></li>
+                        <li><a class="dropdown-item" href="{% url 'btc_withdraw' %}">Withdraw Bitcoin</a></li>
+                        <li><a class="dropdown-item" href="{% url 'usd_deposit' %}">Deposit USD</a></li>
+                        <li><a class="dropdown-item" href="{% url 'usd_withdraw' %}">Withdraw USD</a></li>
+                      </ul> 
+                    </li>
+                  </ul>
                 </div>
-
-                  <div class="container-fluid">
-                    <div class="navbar-collapse" id="navbarNavDarkDropdown">
-                      <ul class="navbar-nav">
-                        <li class="nav-item dropdown">
-                          <a class="nav-link dropdown-toggle" href="#" id="navbarDarkDropdownMenuLink" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                            Details
-                          </a>
-                          <ul class="dropdown-menu dropdown-menu-dark" aria-labelledby="navbarDarkDropdownMenuLink">
-                            <li><a class="dropdown-item" href="{% url 'user_details' %}">Financials</a></li>
-                            <li><a class="dropdown-item" href="{% url 'user_requests' %}">Transactions</a></li>
-                          </ul> 
-                        </li>
-                      </ul>
-                    </div>
-                </div>
-
-                
-                
-                <div class="container-fluid">
-                  <div class="navbar-collapse" id="navbarNavDarkDropdown">
-                    <ul class="navbar-nav">
-                      <li class="nav-item dropdown">
-                        <a class="nav-link dropdown-toggle" href="#" id="navbarDarkDropdownMenuLink" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                          Contact Us
-                        </a>
-                        <ul class="dropdown-menu dropdown-menu-dark" aria-labelledby="navbarDarkDropdownMenuLink">
-                          <li><a class="dropdown-item" href="{% url 'review' %}"> Review</a></li>
-                          <li><a class="dropdown-item" href="{% url 'contact_us' %}">Contact Us</a></li>
-                        </ul> 
-                      </li>
-                    </ul>
-                  </div>
-              </div>
-
-                  <a class="nav-link" href="{% url 'logout' %}">Logout</a> 
-                  {% else %}
-                  <a class="nav-link" href="{% url 'register' %}">Register</a>
-                  <a class="nav-link" href="{% url 'login' %}">Login</a>
-                  {% endif %}
-                </div>
-              </div>
             </div>
-        </nav> <br>
-        
 
+              
+            <div class="navbar-collapse">
+              <ul class="navbar-nav">
+                <li class="nav-item dropdown">
+                  <a class="nav-link dropdown-toggle" href="#" id="navbarDarkDropdownMenuLink" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                    Details
+                  </a>
+                  <ul class="dropdown-menu dropdown-menu-dark" aria-labelledby="navbarDarkDropdownMenuLink">
+                    <li><a class="dropdown-item" href="{% url 'user_details' %}">Financials</a></li>
+                    <li><a class="dropdown-item" href="{% url 'user_requests' %}">Transactions</a></li>
+                  </ul> 
+                </li>
+              </ul>
+            </div>
+      
+          
+            </div>
+            <!-- right nav -->
+          <div class="navbar-nav ms-auto">
+            <ul class="navbar-nav">
+              <li class="nav-item dropdown">
+                <a class="nav-link dropdown-toggle" href="#" id="navbarDarkDropdownMenuLink" role="button" data-bs-toggle="dropdown" aria-expanded="false">Contact Us</a>
+                <ul class="dropdown-menu dropdown-menu-dark" aria-labelledby="navbarDarkDropdownMenuLink">
+                  <li><a class="dropdown-item" href="{% url 'review' %}"> Review</a></li>
+                  <li><a class="dropdown-item" href="{% url 'contact_us' %}">Contact Us</a></li>
+                </ul> 
+              </li>
+            </ul>
+            <a class="nav-link" href="{% url 'logout' %}">Logout</a> 
+            {% else %}
+            <a class="nav-link" href="{% url 'register' %}">Register</a>
+            <a class="nav-link" href="{% url 'login' %}">Login</a>
+            {% endif %}
+          </div>
+          </div>
+
+          
+        </div>
+          
+      </nav> <br>
+        
         {% block content %} {% endblock %}
         {% block scripts %} {% endblock %}
 

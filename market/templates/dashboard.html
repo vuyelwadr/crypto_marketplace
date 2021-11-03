@@ -13,7 +13,9 @@
       BTC Balance: {{btcdetails.balance_btc}} <br>
       BTC Balance in USD: {{btcdetails.balance_usd}} <br>
       <a href="{% url 'btc_buy' %}"> <button type="submit" value="buy" class="btn btn-primary">Buy</button> </a>
-      <a href="{% url 'btc_sell' %}"><button type="submit" value="sell" class="bootstrap-override btn btn-primary">Sell</button> </a>
+      <a href="{% url 'btc_sell' %}"><button type="submit" value="sell" class="btn btn-primary">Sell</button> </a>
+      <a href="{% url 'btc_deposit' %}"><button type="submit" value="btc_deposit" class="btn btn-primary">Deposit</button> </a>
+      <a href="{% url 'btc_withdraw' %}"><button type="submit" value="sell" class="btn btn-primary">Withdraw</button> </a>
       <!-- <button type="submit" value="send" class="bootstrap-override btn btn-primary">Send</button>
       <button type="submit" value="receive" class="btn btn-primary">Receive</button>
       <button type="submit" value="withdraw" class="btn btn-primary">Withdraw</button> -->
