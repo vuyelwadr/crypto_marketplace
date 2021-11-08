@@ -1,0 +1,28 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<!-- OTP form -->
+<section id ="otp-form">
+
+    <div id="bootstrap-override" class="form-section" align="center">
+      <form id="otpForm" class="default-form align-items-center" method="POST">
+        {% csrf_token %}
+        <h1>OTP Log In</h1> <br>
+        <h5>Enter OTP sent to your email {{user.email}}</h5>
+        <!-- Display message when there's an error logging in the user -->
+        {% for message in messages %}
+          <h5 style="color: red;">{{ message }}</h5>
+        {% endfor %}
+        <div class="mb-3">
+          <label for="Inputotp" class="form-label">OTP</label>
+          <input class="form-control" id="Inputotp" name="otp" required>
+        </div>
+
+        <button type="submit" value="otp" class="btn btn-primary">Login</button>
+        
+      </form>
+    </div>
+    
+  </section>
+{% endblock %}

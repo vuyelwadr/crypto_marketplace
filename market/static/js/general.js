@@ -43,3 +43,28 @@ function usd_calculator(){
 // function showhelp(){
 //     document.getElementById('help').style.display="contents"
 // }
+
+
+function openPersonalDetails() {
+    document.getElementById("personal_details").style.display = "block";
+}
+  
+function closePersonalDetails() {
+    document.getElementById("personal_details").style.display = "none";
+} 
+
+function openFinancialDetails() {
+    document.getElementById("financial_details").style.display = "block";
+}
+  
+function closeFinancialDetails() {
+    document.getElementById("financial_details").style.display = "none";
+} 
+
+function openPasswordReset() {
+    document.getElementById("password_reset").style.display = "block";
+}
+  
+function closePasswordReset() {
+    document.getElementById("password_reset").style.display = "none";
+} 

@@ -4,7 +4,7 @@ from django.contrib import messages
 from django.contrib.auth import authenticate, login
 from django.contrib.auth.models import auth
 from bit import Key, PrivateKeyTestnet, wif_to_key
-from datetime import date
+from datetime import date, datetime
 from pycoingecko import CoinGeckoAPI
 import random   
 import string  
@@ -115,16 +115,60 @@ def login(request):
     if request.method == 'POST':
         username = request.POST['username']
         password = request.POST['password']
+        # user_otp = request.POST['otp']
+        request.session['username'] = request.POST['username']
+        request.session['password'] = request.POST['username']
         user = auth.authenticate(username=username, password=password)
         
         if user is not None:
-            auth.login(request, user)
-            return redirect('index')
+            # auth.login(request, user)
+            # return redirect('index')
+            num = 6
+            otp = ''.join(secrets.choice(string.ascii_letters + string.digits) for x in range(num))
+            date = datetime.now()
+            date = date.strftime("%d/%m/%Y %H:%M:%S")
+            email = user.email
+            subject = "Login Request"
+            message = "User" + user.username + " login request at " +  date + "\n" + "OTP: " + otp
+            
+            send_mail(subject, message, settings.DEFAULT_FROM_EMAIL, [email])
+            messages.success(request, "OTP sent successfully")
+
+            request.session['otp'] = str(otp)
+            return redirect('otp_login')
         else:
             messages.info(request, 'Invalid login')
             return redirect('login')
     else:
         return render(request, 'login.html')
+
+def otp_login(request):
+    # https://pypi.org/project/pyotp/
+    try:
+        otp = request.session['otp']
+        username = request.session.get('username')
+        password = request.session.get('password')
+        user = auth.authenticate(username=username, password=password)
+        if request.method == 'POST':
+            user_otp = request.POST['otp']
+            if otp == user_otp:
+                messages.info(request, "same")
+                auth.login(request, user)
+                return redirect('index')
+            else:
+                messages.info(request, "Enter a valid OTP")
+        return render (request, 'otp_login.html', {'user' : user})
+    except:
+        return index(request)
+        # else:
+        #     messages.info(request, user_otp)
+        #     messages.info(request, "Enter valid otp")
+    # details = refreshwallet(request)
+    # userdetails = details.get("userdetails")
+        
+
+
+
 
 def logout(request):
     auth.logout(request)
@@ -313,24 +357,36 @@ def review(request):
 def user_details(request):
     if request.user.is_authenticated:
         userid = request.user.id
+        refreshwallet(request)
+        # details = refreshwallet(request)
+        userid = request.user.id
+        # Use objects.filter because it allows for iteration through the object
+        # Only need fiat and requests for now
+        userdetails = CustomUser.objects.filter(id=userid)
+        btcdetails = Btc_Details.objects.filter(id=userid)
+        fiatdetails = Fiat_Details.objects.filter(id=userid)
+        transactiondetails = Fiat_Transactions.objects.filter(user_id=userid)
+        userrequests = User_Requests.objects.filter(user_id=userid)
+        details = {'userdetails' : userdetails, 'btcdetails' : btcdetails, 'fiatdetails' : fiatdetails, 'transactiondetails' : transactiondetails, 'userrequests' : userrequests}
         if request.method == 'POST':
-            bank_name = request.POST['bank_name']
-            account_name = request.POST['account_name']
-            account_number = request.POST['account_number']
-            try:
-                if (bank_name != "None" and account_name != "" and account_number != ""):
-                    fiatdetail = Fiat_Details.objects.get(id = userid) 
-                    fiatdetail.bank_details = bank_name
-                    fiatdetail.account_name = account_name
-                    fiatdetail.account_number = account_number
-                    fiatdetail.save()
-                    messages.success(request, "Details Saved")
-                else:
-                    messages.info(request, "Enter valid details")
-            except:
-                messages.info(request, "Failed to save details")
-            
-        return render(request, 'user_details.html')
+            if 'financials' in request.POST:
+                bank_name = request.POST['bank_name']
+                account_name = request.POST['account_name']
+                account_number = request.POST['account_number']
+                try:
+                    if (bank_name != "None" and account_name != "" and account_number != ""):
+                        fiatdetail = Fiat_Details.objects.get(id = userid) 
+                        fiatdetail.bank_details = bank_name
+                        fiatdetail.account_name = account_name
+                        fiatdetail.account_number = account_number
+                        fiatdetail.save()
+                        messages.success(request, "Details Saved")
+                    else:
+                        messages.info(request, "Enter valid details")
+                except:
+                    messages.info(request, "Failed to save details")
+                
+        return render(request, 'user_details.html', details)
     else:
         return index(request)
 
@@ -338,13 +394,16 @@ def user_details(request):
 def contact_us(request):
     # https://www.section.io/engineering-education/how-to-send-email-in-django/
     if request.method == 'POST':
-        name = request.POST['name']
-        email = request.POST['email']
-        subject = request.POST['subject']
-        message = request.POST['message']
-        
-        send_mail(subject, "Name: " + name + "\n" + "Email: " + email + "\n" +"\n" + message, settings.DEFAULT_FROM_EMAIL, [settings.DEFAULT_TO_EMAIL])
-        messages.success(request, "Email sent successfully")
+        try:
+            name = request.POST['name']
+            email = request.POST['email']
+            subject = request.POST['subject']
+            message = request.POST['message']
+            
+            send_mail(subject, "Name: " + name + "\n" + "Email: " + email + "\n" +"\n" + message, settings.DEFAULT_FROM_EMAIL, [settings.DEFAULT_TO_EMAIL])
+            messages.success(request, "Email sent successfully")
+        except:
+            messages.info(request, "Failed to send email")
 
     return render(request,'contact_us.html')
 
