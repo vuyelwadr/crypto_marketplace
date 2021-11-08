@@ -8,6 +8,9 @@
 
 <section id="user_details" align="center">
     <div class="container table-responsive-sm">
+        {% for message in messages %}
+          <h5 style="color: red;">{{ message }}</h5>
+        {% endfor %}
         <section>
         <h2>Personal Details</h2>            
         <table id="user_requests" class="table table-bordered table-sm">
@@ -104,9 +107,6 @@
 
                 <label for="account_number"><b>Account Number</b></label>
                 <input type="text" placeholder="Enter Account Number" name="account_number" required>
-            
-                <label for="password"><b>Password</b></label>
-                <input type="password" placeholder="Enter Password" name="password" required>
             
                 <button type="submit" class="btn">Update</button>
                 <button type="button" class="btn cancel" name="personal" onclick="closeFinancialDetails()">Close</button>

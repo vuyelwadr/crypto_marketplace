@@ -129,10 +129,10 @@ def login(request):
             date = date.strftime("%d/%m/%Y %H:%M:%S")
             email = user.email
             subject = "Login Request"
-            message = "User" + user.username + " login request at " +  date + "\n" + "OTP: " + otp
+            message = "User " + user.username + " login request at " +  date + "\n" + "Login Code: " + otp
             
             send_mail(subject, message, settings.DEFAULT_FROM_EMAIL, [email])
-            messages.success(request, "OTP sent successfully")
+            messages.success(request, "Login code sent successfully")
 
             request.session['otp'] = str(otp)
             return redirect('otp_login')
@@ -152,7 +152,6 @@ def otp_login(request):
         if request.method == 'POST':
             user_otp = request.POST['otp']
             if otp == user_otp:
-                messages.info(request, "same")
                 auth.login(request, user)
                 return redirect('index')
             else:
@@ -277,16 +276,19 @@ def usd_withdraw(request):
         num = 12
         reference = ''.join(secrets.choice(string.ascii_letters + string.digits) for x in range(num))
         details['reference'] = reference
+        bank_name = fiatdetails.bank_details
+        account_number = fiatdetails.account_number
+        if (bank_name=="None" or account_number=="None"):
+            messages.info(request, "Please enter financials before withdrawing")
+            return user_details(request)
 
         if request.method == 'POST':
             usdamount = request.POST['usdamount']
-            bank_name = fiatdetails.bank_details
-            account_number = fiatdetails.account_number
-            messages.info(request, bank_name)
+            
             
             try:
                 proof = request.FILES['proof']
-                if (int(usdamount)<=int(fiatdetails.balance) and len(bank_name)>0 and len(account_number)>0) :
+                if (int(usdamount)<=int(fiatdetails.balance)) :
                     user_request(request, "Withdraw", usdamount, reference, proof, bank_name, account_number )
                     messages.success(request,"Transaction Successful")
                 else:

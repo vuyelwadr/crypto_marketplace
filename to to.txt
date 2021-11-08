@@ -60,5 +60,8 @@ add an example of what users are expected to upload (an image)
 add contact us page
 remove background.js from help page?
 
+finish details page
+for the forms enter values= so that the user doesn't have to update all fields, remove required
+
 
 
