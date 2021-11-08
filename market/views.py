@@ -115,7 +115,6 @@ def login(request):
     if request.method == 'POST':
         username = request.POST['username']
         password = request.POST['password']
-        # user_otp = request.POST['otp']
         request.session['username'] = request.POST['username']
         request.session['password'] = request.POST['username']
         user = auth.authenticate(username=username, password=password)
@@ -124,49 +123,41 @@ def login(request):
             # auth.login(request, user)
             # return redirect('index')
             num = 6
-            otp = ''.join(secrets.choice(string.ascii_letters + string.digits) for x in range(num))
+            code = ''.join(secrets.choice(string.ascii_letters + string.digits) for x in range(num))
             date = datetime.now()
             date = date.strftime("%d/%m/%Y %H:%M:%S")
             email = user.email
             subject = "Login Request"
-            message = "User " + user.username + " login request at " +  date + "\n" + "Login Code: " + otp
+            message = "User " + user.username + " login request at " +  date + "\n" + "Login Code: " + code
             
             send_mail(subject, message, settings.DEFAULT_FROM_EMAIL, [email])
             messages.success(request, "Login code sent successfully")
 
-            request.session['otp'] = str(otp)
-            return redirect('otp_login')
+            request.session['code'] = str(code)
+            return redirect('code_login')
         else:
             messages.info(request, 'Invalid login')
             return redirect('login')
     else:
         return render(request, 'login.html')
 
-def otp_login(request):
+def code_login(request):
     # https://pypi.org/project/pyotp/
     try:
-        otp = request.session['otp']
+        code = request.session['code']
         username = request.session.get('username')
         password = request.session.get('password')
         user = auth.authenticate(username=username, password=password)
         if request.method == 'POST':
-            user_otp = request.POST['otp']
-            if otp == user_otp:
+            user_code = request.POST['code']
+            if code == user_code:
                 auth.login(request, user)
                 return redirect('index')
             else:
-                messages.info(request, "Enter a valid OTP")
-        return render (request, 'otp_login.html', {'user' : user})
+                messages.info(request, "Enter a valid Code")
+        return render (request, 'code_login.html', {'user' : user})
     except:
         return index(request)
-        # else:
-        #     messages.info(request, user_otp)
-        #     messages.info(request, "Enter valid otp")
-    # details = refreshwallet(request)
-    # userdetails = details.get("userdetails")
-        
-
-
 
 
 def logout(request):
@@ -278,9 +269,7 @@ def usd_withdraw(request):
         details['reference'] = reference
         bank_name = fiatdetails.bank_details
         account_number = fiatdetails.account_number
-        if (bank_name=="None" or account_number=="None"):
-            messages.info(request, "Please enter financials before withdrawing")
-            return user_details(request)
+       
 
         if request.method == 'POST':
             usdamount = request.POST['usdamount']

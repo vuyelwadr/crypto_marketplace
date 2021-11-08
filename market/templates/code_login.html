@@ -9,16 +9,16 @@
       <form id="otpForm" class="default-form align-items-center" method="POST">
         {% csrf_token %}
         <h1>Log In code</h1> <br>
-        <h5>Enter the login code sent to your email {{user.email}}</h5>
-        <!-- Display message when there's an error logging in the user -->
         {% for message in messages %}
           <h5 style="color: red;">{{ message }}</h5>
         {% endfor %}
+        <h5>Enter the login code sent to your email {{user.email}}</h5>
+        <!-- Display message when there's an error logging in the user -->
         <div class="mb-3">
-          <input class="form-control" id="Inputotp" name="otp" required>
+          <input class="form-control" id="Inputcode" name="code" required>
         </div>
 
-        <button type="submit" value="otp" class="btn btn-primary">Login</button>
+        <button type="submit" value="code" class="btn btn-primary">Login</button>
         
       </form>
     </div>
