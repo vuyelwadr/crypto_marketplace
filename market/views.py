@@ -269,6 +269,10 @@ def usd_withdraw(request):
         details['reference'] = reference
         bank_name = fiatdetails.bank_details
         account_number = fiatdetails.account_number
+
+        if bank_name=="None" or account_number=="None":
+            messages.info(request, "Please enter financials before withdrawing")
+            return user_details(request)
        
 
         if request.method == 'POST':
@@ -364,16 +368,14 @@ def user_details(request):
                 bank_name = request.POST['bank_name']
                 account_name = request.POST['account_name']
                 account_number = request.POST['account_number']
+                messages.info(request, bank_name + account_name + account_number)
                 try:
-                    if (bank_name != "None" and account_name != "" and account_number != ""):
-                        fiatdetail = Fiat_Details.objects.get(id = userid) 
-                        fiatdetail.bank_details = bank_name
-                        fiatdetail.account_name = account_name
-                        fiatdetail.account_number = account_number
-                        fiatdetail.save()
-                        messages.success(request, "Details Saved")
-                    else:
-                        messages.info(request, "Enter valid details")
+                    fiatdetail = Fiat_Details.objects.get(id = userid) 
+                    fiatdetail.bank_details = bank_name
+                    fiatdetail.account_name = account_name
+                    fiatdetail.account_number = account_number
+                    fiatdetail.save()
+                    messages.success(request, "Details Saved")
                 except:
                     messages.info(request, "Failed to save details")
                 

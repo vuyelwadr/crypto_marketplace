@@ -63,5 +63,8 @@ remove background.js from help page?
 finish details page
 for the forms enter values= so that the user doesn't have to update all fields, remove required
 
+add visual pi chart
+make reviews visible
+
 
 
