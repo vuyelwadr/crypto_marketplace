@@ -2,7 +2,7 @@ from django.shortcuts import render, redirect
 from .models import CustomUser, Btc_Details, Fiat_Details, Fiat_Transactions, User_Requests, Reviews
 from django.contrib import messages
 from django.contrib.auth import authenticate, login
-from django.contrib.auth.models import auth
+from django.contrib.auth.models import auth, AbstractUser
 from bit import Key, PrivateKeyTestnet, wif_to_key
 from datetime import date, datetime
 from pycoingecko import CoinGeckoAPI
@@ -15,6 +15,7 @@ from django.utils.datastructures import MultiValueDictKeyError
 from django.db.models import Sum, Count
 from django.core.mail import send_mail
 from django.conf import settings
+from django.contrib.auth.hashers import make_password
 
 # Bitcoin transaction fees
 # if update change in btc buy, sell and withdraw pages
@@ -78,7 +79,7 @@ def register(request):
                 if CustomUser.objects.filter(email=email).exists():
                     messages.info(request, 'Email Taken')
                     return redirect('register')
-                    # make sure eusernamemail isn't taken
+                    # make sure username isn't taken
                 elif CustomUser.objects.filter(username=username).exists():
                     messages.info(request, 'Username Taken')
                     return redirect('register')
@@ -116,7 +117,7 @@ def login(request):
         username = request.POST['username']
         password = request.POST['password']
         request.session['username'] = request.POST['username']
-        request.session['password'] = request.POST['username']
+        request.session['password'] = request.POST['password']
         user = auth.authenticate(username=username, password=password)
         
         if user is not None:
@@ -143,21 +144,22 @@ def login(request):
 
 def code_login(request):
     # https://pypi.org/project/pyotp/
-    try:
-        code = request.session['code']
-        username = request.session.get('username')
-        password = request.session.get('password')
-        user = auth.authenticate(username=username, password=password)
-        if request.method == 'POST':
-            user_code = request.POST['code']
-            if code == user_code:
-                auth.login(request, user)
-                return redirect('index')
-            else:
-                messages.info(request, "Enter a valid Code")
-        return render (request, 'code_login.html', {'user' : user})
-    except:
-        return index(request)
+    # try:
+    code = request.session['code']
+    username = request.session.get('username')
+    password = request.session.get('password')
+
+    user = auth.authenticate(username=username, password=password)
+    if request.method == 'POST':
+        user_code = request.POST['code']
+        if code == user_code:
+            auth.login(request, user)
+            return redirect('index')
+        else:
+            messages.info(request, "Enter a valid Code")
+    return render (request, 'code_login.html', {'user' : user})
+    # except:
+    #     return index(request)
 
 
 def logout(request):
@@ -378,6 +380,35 @@ def user_details(request):
                     messages.success(request, "Details Saved")
                 except:
                     messages.info(request, "Failed to save details")
+                
+            if 'personal' in request.POST:
+                first_name = request.POST['first_name']
+                last_name = request.POST['last_name']
+                messages.success(request, first_name + last_name)
+                try:
+                    userdetail = CustomUser.objects.get(id = userid) 
+                    userdetail.first_name = first_name
+                    userdetail.last_name = last_name
+                    userdetail.save()
+                    messages.success(request, "Details Saved")
+                except:
+                    messages.info(request, "Failed to save details")
+
+            if 'password' in request.POST:
+                password1 = request.POST['password1']
+                password2 = request.POST['password2']
+                try:
+                    if password1==password2:
+                        userdetail = CustomUser.objects.get(id = userid) 
+                        userdetail.set_password(password1)
+                        userdetail.save()
+                        messages.success(request, "Password Changed")
+                        return redirect('login')
+                    else:
+                        messages.info(request, "Passwords not matching")
+                except:
+                    messages.info(request, "Failed to save details")
+
                 
         return render(request, 'user_details.html', details)
     else:
