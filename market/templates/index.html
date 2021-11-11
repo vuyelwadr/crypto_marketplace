@@ -5,10 +5,10 @@
   <section id="home-page">
 
     <section class="text-center">
-        <div">
-          <h2>Buy and Sell Crypto</h2>
-          <p>If you're tired of being blocked by crypto marketplaces due to being from a restricted country then you're in the right place. Crypto Z will allow you to buy and sell bitcoin as you wish with no restrictions</p>
-        </div>  <br>
+      <div>
+        <h2>Buy and Sell Crypto</h2>
+        <p>If you're tired of being blocked by crypto marketplaces due to being from a restricted country then you're in the right place. Crypto Z will allow you to buy and sell bitcoin as you wish with no restrictions</p>
+      </div>  <br>
 
       <div>
         <h2 class="text-center"><a class="default-link" href="{% url 'login' %}">Login </a> </h2>
@@ -16,18 +16,13 @@
           <h4 align="center">
               <b>And get a Bitcoin wallet for free</b>
           </h4>
-      </div>
-
-      <div>
-        {% for message in messages %}
-            <h5>{{ message }}</h5>
-        {% endfor %}
+          <a class="default-link" href="#more"><h2>Click here for Help</h2></a>
       </div>
     </section>
     
     <!-- https://bootstrapious.com/p/bootstrap-navbar-with-logo-->
-    <section class="py-5">
-        <div class="container py-5">
+    <section class="py-3">
+        <div class="container py-3">
             <ol class="pl-3">
                 <li class="mb-3">Register</li>
                 <li class="mb-3">Deposit money or transfer some crypto into your wallet</li>
@@ -35,6 +30,11 @@
             </ol>
             <p class="text-muted mt-5">Live with no <u>restrictions</u></p>
         </div>
+    </section>
+
+    <section id="more" class="text-center" align="center">
+      <iframe width="360px" height="315px" src="https://www.youtube.com/embed/6Gu2QMTAkEU" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+      <iframe width="360" height="315" src="https://www.youtube.com/embed/6Gu2QMTAkEU" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
     </section>
 
   </section>

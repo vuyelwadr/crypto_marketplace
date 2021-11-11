@@ -7,13 +7,13 @@
 
 
 <section id="user_details" align="center">
-    <div class="container table-responsive-sm">
+    <div class="container">
         {% for message in messages %}
           <h5 style="color: red;">{{ message }}</h5>
         {% endfor %}
-        <section>
+        <section class="container table-responsive-sm">
         <h2>Personal Details</h2>            
-        <table id="user_requests" class="table table-bordered table-sm">
+        <table id="user_details" class="table table-bordered table-sm">
             <thead>
                 <tr>
                 <th>Username</th>
@@ -58,7 +58,7 @@
         {% endfor %}
         </section>
    
-        <section>
+        <section class="container table-responsive-sm">
             <h2>Financials</h2>
         <table id="user_requests" class="table table-bordered table-sm">
             <thead>
@@ -87,7 +87,6 @@
                 {% for message in messages %}
                 <h5 style="color: red;">{{ message }}</h5>
                 {% endfor %}
-                Bank : {{fiat.bank_details}} 
                 <label for="bank_name" class="form-label">Bank Name</label>
                 <!-- All the banks in zimbabwe https://en.wikipedia.org/wiki/List_of_banks_in_Zimbabwe -->
                 <select class="form-control" name="bank_name">
@@ -119,7 +118,7 @@
         {% endfor %}
         </section> 
         
-        <section>
+        <section class="container table-responsive-sm">
             <h2>Password Reset</h2>      
             <button class="open-button" onclick="openPasswordReset()">Forgot Password</button>
             <div class="form-popup" id="password_reset">

@@ -1,4 +1,5 @@
 {% extends "base.html" %}
+{% load static %}
 
 {% block content %}
   <!-- Dashboard for for authenticated users -->
@@ -27,6 +28,8 @@
       <a href="{% url 'usd_withdraw' %}"><button type="submit" value="withdraw" class="btn btn-primary">Withdraw</button></a>
       <!-- <button type="submit" value="history" class="btn btn-primary">History</button> -->
     </div>
+    <!-- <h5>Asset</h5> -->
+    <img src="{% static 'img/assets.png' %}" alt="Crypto Z loggo" style="height: 350px; width: 350px;">
   </section>
 
 

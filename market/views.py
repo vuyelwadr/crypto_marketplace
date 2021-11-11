@@ -16,6 +16,9 @@ from django.db.models import Sum, Count
 from django.core.mail import send_mail
 from django.conf import settings
 from django.contrib.auth.hashers import make_password
+import matplotlib.pyplot as plt
+import numpy as np
+import sys
 
 # Bitcoin transaction fees
 # if update change in btc buy, sell and withdraw pages
@@ -24,11 +27,24 @@ btc_fast_transaction_fee = 10
 
 
 def index(request):
+    # https://www.w3schools.com/python/matplotlib_pie_charts.asp
     if request.user.is_authenticated:
         userid = request.user.id
         details = refreshwallet(request)
         userdetails = details.get("userdetails")
-        
+        # Asset pie chart
+        y = np.array([35, 25])
+        color = ("#ffa500","#555")
+        total = sum(y)
+        mylabels = ["Bitcoin", "USD"]
+
+        plt.pie(y, labels=mylabels,colors=color, autopct=lambda p: '{:.0f}%'.format(p * total / 100))
+        # plt.show() 
+        # plt.savefig('market/static/img/assets.png' ,bbox_inches='tight')
+        plt.savefig('market/static/img/assets.png' ,bbox_inches='tight', pad_inches=-0.1)
+        # sys.stdout.flush()
+
+
         return render(request, 'dashboard.html', details)
     else:
         sentiments = Reviews.objects.all()
@@ -320,6 +336,7 @@ def review(request):
         userid = request.user.id
         details = refreshwallet(request)
         userdetails = details.get("userdetails")
+        details["reviews"] = Reviews.objects.filter()
         if request.method == 'POST':
             url = "https://twinword-sentiment-analysis.p.rapidapi.com/analyze/"
             headers = {
@@ -347,9 +364,10 @@ def review(request):
                 sentiment = "Negative"
             reviews = Reviews.objects.create(user_id=userid, author_email=userdetails.email, review_title=title, review_body=body, creation_date=str(date.today()), sentiment_score=score, sentiment=sentiment)
             messages.success(request, "Review Submitted")
-        return render(request,'review.html')
+        return render(request,'review.html', details)
     else:
-        return index(request)
+        reviews = Reviews.objects.filter()
+        return render(request,'review.html',{"reviews" :reviews})
 
 def user_details(request):
     if request.user.is_authenticated:
@@ -400,6 +418,7 @@ def user_details(request):
                 try:
                     if password1==password2:
                         userdetail = CustomUser.objects.get(id = userid) 
+                        # set_password hashes the password
                         userdetail.set_password(password1)
                         userdetail.save()
                         messages.success(request, "Password Changed")

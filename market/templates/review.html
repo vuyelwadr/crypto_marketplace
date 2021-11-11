@@ -1,9 +1,11 @@
 {% extends "base.html" %}
 
 {% block content %}
+
 <!-- review form -->
-<section id ="review-form" style="height: 100px">
-    <div id="bootstrap-override" class="form-section  justify-content-center" align="center">
+<section id ="review-form" style="height: 100px" class="justify-content-center">
+  {% if user.is_authenticated %}
+    <div id="bootstrap-override" class="form-section" align="center">
       <form id="reviewForm" class="default-form align-items-center" method="POST">
         {% csrf_token %}
         <h1>Write a review</h1> <br>
@@ -22,6 +24,45 @@
         <button type="submit" value="review" class="btn btn-primary">Submit</button>
         
       </form>
+      <br><p></p>
+      <button type="submit" value="reviews" class="btn btn-primary" onclick=showReviews()>Show reviews</button>
+    </div>
+    
+    <div id="user_reviews" style="display: none;" class="container table-responsive-sm">
+      {% endif %}
+      <h2>Reviews</h2>            
+      <table class="table table-bordered table-sm">
+          <thead>
+              <tr>
+              <th>Title</th>
+              <th>Sentiment</th>
+              <th>Content</th>
+              <!-- <th>Date</th> -->
+              </tr>
+          </thead>
+          <tbody>
+              {% for review in reviews %}
+              <tr>
+              <td>{{ review.review_title }}</td>
+              <td>{{ review.sentiment }}</td>
+              <td>{{ review.review_body }}</td>
+              <!-- <td>{{ review.creation_date }}</td> -->
+              </tr>
+              {% endfor %}
+              
+          </tbody>
+      </table>
+  
     </div>
 </section>
+
+
+{% endblock %}
+
+{% block scripts %}
+    <script>
+      function showReviews() {
+        document.getElementById("user_reviews").style.display = "block";
+      }
+    </script> 
 {% endblock %}
