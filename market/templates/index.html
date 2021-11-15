@@ -8,8 +8,11 @@
       <div>
         <h2>Buy and Sell Crypto</h2>
         <p>If you're tired of being blocked by crypto marketplaces due to being from a restricted country then you're in the right place. Crypto Z will allow you to buy and sell bitcoin as you wish with no restrictions</p>
+        {% for message in messages %}
+        <h5 style="color: black;">{{ message }}</h5>
+        {% endfor %}
       </div>  <br>
-
+      
       <div>
         <h2 class="text-center"><a class="default-link" href="{% url 'login' %}">Login </a> </h2>
           <h2 class="text-center">Create An Account <a class="default-link" href="{% url 'register' %}">Now</a></h2>

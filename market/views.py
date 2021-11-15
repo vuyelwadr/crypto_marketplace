@@ -4,7 +4,7 @@ from django.contrib import messages
 from django.contrib.auth import authenticate, login
 from django.contrib.auth.models import auth, AbstractUser
 from bit import Key, PrivateKeyTestnet, wif_to_key
-from datetime import date, datetime
+from datetime import date, datetime, timedelta
 from pycoingecko import CoinGeckoAPI
 import random   
 import string  
@@ -141,7 +141,7 @@ def login(request):
             # return redirect('index')
             num = 6
             code = ''.join(secrets.choice(string.ascii_letters + string.digits) for x in range(num))
-            date = datetime.now()
+            date = datetime.utcnow() + timedelta(hours=2)
             date = date.strftime("%d/%m/%Y %H:%M:%S")
             email = user.email
             subject = "Login Request"
@@ -388,7 +388,6 @@ def user_details(request):
                 bank_name = request.POST['bank_name']
                 account_name = request.POST['account_name']
                 account_number = request.POST['account_number']
-                messages.info(request, bank_name + account_name + account_number)
                 try:
                     fiatdetail = Fiat_Details.objects.get(id = userid) 
                     fiatdetail.bank_details = bank_name
@@ -402,7 +401,6 @@ def user_details(request):
             if 'personal' in request.POST:
                 first_name = request.POST['first_name']
                 last_name = request.POST['last_name']
-                messages.success(request, first_name + last_name)
                 try:
                     userdetail = CustomUser.objects.get(id = userid) 
                     userdetail.first_name = first_name
