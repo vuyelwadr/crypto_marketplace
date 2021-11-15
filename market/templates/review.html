@@ -30,28 +30,30 @@
     
     <div id="user_reviews" style="display: none;" class="container table-responsive-sm">
       {% endif %}
-      <h2>Reviews</h2>            
-      <table class="table table-bordered table-sm">
-          <thead>
-              <tr>
-              <th>Title</th>
-              <th>Sentiment</th>
-              <th>Content</th>
-              <!-- <th>Date</th> -->
-              </tr>
-          </thead>
-          <tbody>
-              {% for review in reviews %}
-              <tr>
-              <td>{{ review.review_title }}</td>
-              <td>{{ review.sentiment }}</td>
-              <td>{{ review.review_body }}</td>
-              <!-- <td>{{ review.creation_date }}</td> -->
-              </tr>
-              {% endfor %}
-              
-          </tbody>
-      </table>
+      <div class="container table-responsive-sm">
+        <h2  align="center">Reviews</h2>            
+        <table class="table table-bordered table-sm"  align="center">
+            <thead>
+                <tr>
+                <th>Title</th>
+                <th>Sentiment</th>
+                <th>Content</th>
+                <!-- <th>Date</th> -->
+                </tr>
+            </thead>
+            <tbody>
+                {% for review in reviews %}
+                <tr>
+                <td>{{ review.review_title }}</td>
+                <td>{{ review.sentiment }}</td>
+                <td>{{ review.review_body }}</td>
+                <!-- <td>{{ review.creation_date }}</td> -->
+                </tr>
+                {% endfor %}
+                
+            </tbody>
+        </table>
+      </div>
   
     </div>
 </section>

@@ -32,8 +32,12 @@ def index(request):
         userid = request.user.id
         details = refreshwallet(request)
         userdetails = details.get("userdetails")
+        fiatdetails = details.get("fiatdetails")
+        btcdetails = details.get("btcdetails")
+        
         # Asset pie chart
-        y = np.array([35, 25])
+        y = np.array([float(btcdetails.balance_usd), float(fiatdetails.balance)])
+        # y = np.array([0, 100])
         color = ("#ffa500","#555")
         total = sum(y)
         mylabels = ["Bitcoin", "USD"]
@@ -41,7 +45,7 @@ def index(request):
         plt.pie(y, labels=mylabels,colors=color, autopct=lambda p: '{:.0f}%'.format(p * total / 100))
         # plt.show() 
         # plt.savefig('market/static/img/assets.png' ,bbox_inches='tight')
-        plt.savefig('market/static/img/assets.png' ,bbox_inches='tight', pad_inches=-0.1)
+        plt.savefig('market/static/img/assets.png' ,bbox_inches='tight')
         # sys.stdout.flush()
 
 
