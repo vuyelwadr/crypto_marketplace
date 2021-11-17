@@ -511,10 +511,11 @@ def contact_us(request):
         try:
             name = request.POST['name']
             email = request.POST['email']
+            phone = request.POST['phone']
             subject = request.POST['subject']
             message = request.POST['message']
             
-            send_mail(subject, "Name: " + name + "\n" + "Email: " + email + "\n" +"\n" + message, settings.DEFAULT_FROM_EMAIL, [settings.DEFAULT_TO_EMAIL])
+            send_mail(subject, "Name: " + name + "\n" + "Email: " + email + "\n" + "Phone: " + phone + "\n" +"\n" + message, settings.DEFAULT_FROM_EMAIL, [settings.DEFAULT_TO_EMAIL])
             messages.success(request, "Email sent successfully")
         except:
             messages.info(request, "Failed to send email")
