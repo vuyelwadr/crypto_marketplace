@@ -5,8 +5,12 @@ from django.http import HttpResponse
 from django.contrib import messages
 from .models import CustomUser, Btc_Details, Fiat_Details, Fiat_Transactions, User_Requests, Reviews
 from datetime import date
+from django.contrib.admin import AdminSite
+from django.utils.translation import ugettext_lazy
+
 
 # Register your models here.
+
 class Requests(admin.ModelAdmin):
     change_form_template = "admin_user_requests.html"
 
@@ -74,5 +78,8 @@ class Review(admin.ModelAdmin):
         db_table = "tbl_temp_users"
 
 
+# admin.site.register = MyAdminSite()
 admin.site.register(User_Requests, Requests)
 admin.site.register(Reviews, Review)
+# Change the default site header
+admin.site.site_header = 'CryptoZ admin'
