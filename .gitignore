@@ -3,3 +3,4 @@ venv
 staticfiles
 .env
 uploads
+market/static/img/assets.png

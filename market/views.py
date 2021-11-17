@@ -300,24 +300,24 @@ def btc_sell(request):
             usdamount = request.POST['usdamount']
             transaction_priority = request.POST['transaction_priority']
 
-            try:
-                if (btcdetails.balance_usd >= usdamount+btc_transaction_fee):
-                    admindetails = CustomUser.objects.prefetch_related().get(id=1)
-                    userwallet = PrivateKeyTestnet(userdetails.private_key)
-                    if (transaction_priority=="1"):
-                        tx_1 = userwallet.send([(admindetails.public_key, usdamount, 'usd')])
-                        messages.info(request, "Fast Transaction")
-                    else:
-                        tx_1 = userwallet.send([(admindetails.public_key, usdamount, 'usd')], fee=5000, absolute_fee=True)
-                        messages.info(request, "Normal Transaction")
-                    
-                    fiat(request, "Sell", usdamount, tx_1)
-                    details = refreshwallet(request)
-                    messages.success(request, mark_safe("Transaction Successful, transaction id: " + tx_1 + "<br/>" + "To see your transaction use the following link: <br/> https://blockstream.info/testnet/tx/" + tx_1))
+            # try:
+            if (round(float(btcdetails.balance_usd)) >= round(float(usdamount))+ btc_transaction_fee):
+                admindetails = CustomUser.objects.prefetch_related().get(id=1)
+                userwallet = PrivateKeyTestnet(userdetails.private_key)
+                if (transaction_priority=="1"):
+                    tx_1 = userwallet.send([(admindetails.public_key, usdamount, 'usd')])
+                    messages.info(request, "Fast Transaction")
                 else:
-                    messages.info(request, "Insufficient funds")
-            except :
-                messages.info(request,"Transaction Failed") 
+                    tx_1 = userwallet.send([(admindetails.public_key, usdamount, 'usd')], fee=5000, absolute_fee=True)
+                    messages.info(request, "Normal Transaction")
+                
+                fiat(request, "Sell", usdamount, tx_1)
+                details = refreshwallet(request)
+                messages.success(request, mark_safe("Transaction Successful, transaction id: " + tx_1 + "<br/>" + "To see your transaction use the following link: <br/> https://blockstream.info/testnet/tx/" + tx_1))
+            else:
+                messages.info(request, "Insufficient funds")
+            # except :
+                # messages.info(request,"Transaction Failed") 
 
         return render(request, 'btc_sell.html', details)
     else:
