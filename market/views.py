@@ -181,6 +181,75 @@ def code_login(request):
     # except:
     #     return index(request)
 
+def forgot_password(request):
+    # If the user is logged in then redirect to the details to reset there
+    if request.user.is_authenticated:
+        return redirect('user_details')
+    else:
+        if request.method == 'POST':
+            username = request.POST['username']
+            email = request.POST['email']
+            request.session['username'] = request.POST['username']
+            request.session['email'] = request.POST['email']
+            # user = auth.authenticate(username=username, email=email)
+            try:
+                if CustomUser.objects.get(username=username) == CustomUser.objects.get(email=email) :
+                    userdetail = CustomUser.objects.get(username=username) 
+                    request.session['username'] = username
+                    # user = auth.authenticate(username=username, password=username)
+                else:
+                    messages.info(request, "User doesn't exist")
+            except:
+                messages.info(request, "User doesn't exist")
+
+            # try:
+            num = 6
+            code = ''.join(secrets.choice(string.ascii_letters + string.digits) for x in range(num))
+            request.session['code'] = str(code)
+            date = datetime.utcnow() + timedelta(hours=2)
+            date = date.strftime("%d/%m/%Y %H:%M:%S")
+            email = userdetail.email
+            subject = "Password Reset Request"
+            message = "User " + userdetail.username + " Password reset request at " +  date + "\n" + "Login Code: " + code
+            
+            send_mail(subject, message, settings.DEFAULT_FROM_EMAIL, [email])
+            return redirect('reset_password')
+            # except:
+            #     messages.info(request, "Error sending Code")
+
+        return render(request,'forgot_password.html')
+
+def reset_password(request):
+    if request.user.is_authenticated:
+        return redirect('user_details')
+    else:
+        try:
+            username = request.session['username']
+            userdetail = CustomUser.objects.get(username=username) 
+        except:
+            return redirect('login')
+
+        if request.method == 'POST':
+            code = request.POST['code']
+            password1 = request.POST['password1']
+            password2 = request.POST['password2']
+            generated_code = request.session['code']
+            try:
+                if code == request.session['code']:
+                    if  password1==password2:
+                        userdetail = CustomUser.objects.get(username=username) 
+                        # set_password hashes the password
+                        userdetail.set_password(password1)
+                        userdetail.save()
+                        messages.success(request, "Password Changed")
+                        return redirect('login')
+                    else:
+                        messages.info(request, "Passwords not matching")
+                else:
+                    messages.info(request, "Incorrect Code")
+            except:
+                messages.info(request, "Failed to save details")
+        return render(request, 'reset_password.html', {'userdetail' : userdetail})
 
 def logout(request):
     auth.logout(request)
