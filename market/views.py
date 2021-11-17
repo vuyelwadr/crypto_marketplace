@@ -338,7 +338,7 @@ def usd_deposit(request):
                 if int(usdamount) > 0 :
                     proof = request.FILES['proof']
                     user_request(request, "Deposit", usdamount, reference, proof, settings.DEFAULT_BANK, settings.DEFAULT_BANK_ACCOUNT)
-                    messages.success(request,"Transaction Successful")
+                    messages.success(request,"Transaction Pending")
                 else:
                     messages.info(request,"Enter a valid amount")
             except MultiValueDictKeyError:
@@ -374,7 +374,7 @@ def usd_withdraw(request):
                 proof = request.FILES['proof']
                 if (int(usdamount)<=int(fiatdetails.balance)) :
                     user_request(request, "Withdraw", usdamount, reference, proof, bank_name, account_number )
-                    messages.success(request,"Transaction Successful")
+                    messages.success(request,"Transaction Pending")
                 else:
                     messages.info(request,"Transaction Failed")
             except MultiValueDictKeyError:
@@ -623,7 +623,7 @@ def fiat(request,transaction, sum, reference):
         fiatdetail = Fiat_Details(userid, balance=(int(fiatdetails.balance)-int(sum))) 
         fiatdetail.save()
 
-        fiattransactions = Fiat_Transactions.objects.create(user_id=userid, date=str(date.today()), amount=sum, transaction_type='Fee', notes='BTC Fast Transaction Fee: '+reference)
+        fiattransactions = Fiat_Transactions.objects.create(user_id=userid, date=str(date.today()), amount=sum, transaction_type='Fee', notes='BTC Fast Transaction Fee ID: '+reference)
 
     elif (transaction == "0"):
         fiatdetail = Fiat_Details(userid, balance=(int(fiatdetails.balance)-int(sum))) 
