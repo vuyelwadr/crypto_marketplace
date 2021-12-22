@@ -43,10 +43,8 @@ def index(request):
         mylabels = ["Bitcoin", "USD"]
 
         plt.pie(y, labels=mylabels,colors=color, autopct=lambda p: '{:.0f}%'.format(p * total / 100))
-        # plt.show() 
-        # plt.savefig('market/static/img/assets.png' ,bbox_inches='tight')
-        plt.savefig('market/static/img/assets.png' ,bbox_inches='tight')
-        # sys.stdout.flush()
+        plt.savefig('market/static/img/assets.png')
+        # removed ,bbox_inches='tight' from   plt.savefig
 
 
         return render(request, 'dashboard.html', details)
@@ -164,22 +162,22 @@ def login(request):
 
 def code_login(request):
     # https://pypi.org/project/pyotp/
-    # try:
-    code = request.session['code']
-    username = request.session.get('username')
-    password = request.session.get('password')
+    try:
+        code = request.session['code']
+        username = request.session.get('username')
+        password = request.session.get('password')
 
-    user = auth.authenticate(username=username, password=password)
-    if request.method == 'POST':
-        user_code = request.POST['code']
-        if code == user_code:
-            auth.login(request, user)
-            return redirect('index')
-        else:
-            messages.info(request, "Enter a valid Code")
-    return render (request, 'code_login.html', {'user' : user})
-    # except:
-    #     return index(request)
+        user = auth.authenticate(username=username, password=password)
+        if request.method == 'POST':
+            user_code = request.POST['code']
+            if code == user_code:
+                auth.login(request, user)
+                return redirect('index')
+            else:
+                messages.info(request, "Enter a valid Code")
+        return render (request, 'code_login.html', {'user' : user})
+    except:
+        return index(request)
 
 def forgot_password(request):
     # If the user is logged in then redirect to the details to reset there
@@ -202,20 +200,20 @@ def forgot_password(request):
             except:
                 messages.info(request, "User doesn't exist")
 
-            # try:
-            num = 6
-            code = ''.join(secrets.choice(string.ascii_letters + string.digits) for x in range(num))
-            request.session['code'] = str(code)
-            date = datetime.utcnow() + timedelta(hours=2)
-            date = date.strftime("%d/%m/%Y %H:%M:%S")
-            email = userdetail.email
-            subject = "Password Reset Request"
-            message = "User " + userdetail.username + " Password reset request at " +  date + "\n" + "Login Code: " + code
-            
-            send_mail(subject, message, settings.DEFAULT_FROM_EMAIL, [email])
-            return redirect('reset_password')
-            # except:
-            #     messages.info(request, "Error sending Code")
+            try:
+                num = 6
+                code = ''.join(secrets.choice(string.ascii_letters + string.digits) for x in range(num))
+                request.session['code'] = str(code)
+                date = datetime.utcnow() + timedelta(hours=2)
+                date = date.strftime("%d/%m/%Y %H:%M:%S")
+                email = userdetail.email
+                subject = "Password Reset Request"
+                message = "User " + userdetail.username + " Password reset request at " +  date + "\n" + "Login Code: " + code
+                
+                send_mail(subject, message, settings.DEFAULT_FROM_EMAIL, [email])
+                return redirect('reset_password')
+            except:
+                messages.info(request, "Error sending Code")
 
         return render(request,'forgot_password.html')
 
@@ -271,7 +269,7 @@ def btc_buy(request):
                     adminwallet = PrivateKeyTestnet(admindetails.private_key) 
                     # add a $3 or $10 transaction fee fast transaction will revert to normal if insufficient funds
                     if (transaction_priority=="1" and fiatdetail.balance > int(usdamount) + btc_fast_transaction_fee):
-                        tx_1 = adminwallet.send([(userdetails.public_key, usdamount, 'usd')])
+                        tx_1 = adminwallet.send([(userdetails.public_key, usdamount, 'usd')], fee=15000, absolute_fee=True)
                         fiat(request, "1", btc_fast_transaction_fee, tx_1)
                         messages.info(request, "Fast Transaction")
                     else:
@@ -304,8 +302,8 @@ def btc_sell(request):
             if (round(float(btcdetails.balance_usd)) >= round(float(usdamount))+ btc_transaction_fee):
                 admindetails = CustomUser.objects.prefetch_related().get(id=1)
                 userwallet = PrivateKeyTestnet(userdetails.private_key)
-                if (transaction_priority=="1"):
-                    tx_1 = userwallet.send([(admindetails.public_key, usdamount, 'usd')])
+                if (transaction_priority=="1" and fiatdetail.balance > int(usdamount) + btc_fast_transaction_fee):
+                    tx_1 = userwallet.send([(admindetails.public_key, usdamount, 'usd')], fee=15000, absolute_fee=True)
                     messages.info(request, "Fast Transaction")
                 else:
                     tx_1 = userwallet.send([(admindetails.public_key, usdamount, 'usd')], fee=5000, absolute_fee=True)

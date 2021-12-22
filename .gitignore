@@ -4,3 +4,4 @@ staticfiles
 .env
 uploads
 market/static/img/assets.png
+install.txt
